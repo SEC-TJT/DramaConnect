@@ -1,0 +1,84 @@
+---
+- id: 1
+  name: Breaking Bad
+  rate: 9.5
+  review: A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family's future.
+  type: TV Series
+  category: Drama, Crime, Thriller
+  creator_id: 1
+  creator_name: Vince Gilligan
+  picture: breaking-bad.jpg
+  year: 2008
+  created_date: 2008-01-20
+  updated_date: 2013-09-29
+  link: https://www.imdb.com/title/tt0903747/
+
+- id: 2
+  name: Game of Thrones
+  rate: 9.3
+  review: Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.
+  type: TV Series
+  category: Action, Adventure, Drama
+  creator_id: 2
+  creator_name: David Benioff, D.B. Weiss
+  picture: game-of-thrones.jpg
+  year: 2011
+  created_date: 2011-04-17
+  updated_date: 2019-05-19
+  link: https://www.imdb.com/title/tt0944947/
+
+- id: 3
+  name: The Shawshank Redemption
+  rate: 9.3
+  review: Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.
+  type: Movie
+  category: Drama
+  creator_id: 3
+  creator_name: Frank Darabont
+  picture: shawshank-redemption.jpg
+  year: 1994
+  created_date: 1994-09-23
+  updated_date: 2021-04-08
+  link: https://www.imdb.com/title/tt0111161/
+
+- id: 4
+  name: Stranger Things
+  rate: 8.7
+  review: When a young boy disappears, his mother, a police chief, and his friends must confront terrifying forces in order to get him back.
+  type: TV Series
+  category: Drama, Fantasy, Horror
+  creator_id: 4
+  creator_name: The Duffer Brothers
+  picture: stranger-things.jpg
+  year: 2016
+  created_date: 2016-07-15
+  updated_date: 2022-05-20
+  link: https://www.imdb.com/title/tt4574334/
+
+- id: 5
+  name: The Crown
+  rate: 8.6
+  review: Follows the political rivalries and romance of Queen Elizabeth II's reign and the events that shaped the second half of the twentieth century.
+  type: TV Series
+  category: Drama, History
+  creator_id: 5
+  creator_name: Peter Morgan
+  picture: the-crown.jpg
+  year: 2016
+  created_date: 2016-11-04
+  updated_date: 2022-11-17
+  link: https://www.imdb.com/title/tt4786824/
+
+- id: 6
+  name: The Godfather
+  rate: 9.2
+  review: The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.
+  type: Movie
+  category: Crime, Drama
+  creator_id: 6
+  creator_name: Francis Ford Coppola
+  picture: the-godfather.jpg
+  year: 1972
+  created_date: 1972-03-24
+  updated_date: 2022-06-22
+  link: https://www.imdb.com/title/tt0068646/
