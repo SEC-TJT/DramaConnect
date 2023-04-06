@@ -3,16 +3,16 @@
 require 'roda'
 require 'json'
 
-require_relative '../models/document'
+require_relative '../models/drama'
 
-module Credence
-  # Web controller for Credence API
+module DramaConnect
+  # Web controller for DramaConnect API
   class Api < Roda
     plugin :environments
     plugin :halt
 
     configure do
-      Document.setup
+      Drama.setup
     end
 
     route do |routing| # rubocop:disable Metrics/BlockLength
@@ -20,37 +20,37 @@ module Credence
 
       routing.root do
         response.status = 200
-        { message: 'CredenceAPI up at /api/v1' }.to_json
+        { message: 'DramaConnectAPI up at /api/v1' }.to_json
       end
 
       routing.on 'api' do
         routing.on 'v1' do
-          routing.on 'documents' do
-            # GET api/v1/documents/[id]
+          routing.on 'dramas' do
+            # GET api/v1/dramas/{ID}
             routing.get String do |id|
               response.status = 200
-              Document.find(id).to_json
+              Drama.find(id).to_json
             rescue StandardError
-              routing.halt 404, { message: 'Document not found' }.to_json
+              routing.halt 404, { message: 'Drama not found' }.to_json
             end
 
-            # GET api/v1/documents
+            # GET api/v1/dramas
             routing.get do
               response.status = 200
-              output = { document_ids: Document.all }
+              output = { drama_ids: Drama.all }
               JSON.pretty_generate(output)
             end
 
-            # POST api/v1/documents
+            # POST api/v1/dramas
             routing.post do
               new_data = JSON.parse(routing.body.read)
-              new_doc = Document.new(new_data)
+              new_doc = Drama.new(new_data)
 
               if new_doc.save
                 response.status = 201
-                { message: 'Document saved', id: new_doc.id }.to_json
+                { message: 'Drama saved', id: new_doc.id }.to_json
               else
-                routing.halt 400, { message: 'Could not save document' }.to_json
+                routing.halt 400, { message: 'Could not save the drama' }.to_json
               end
             end
           end
