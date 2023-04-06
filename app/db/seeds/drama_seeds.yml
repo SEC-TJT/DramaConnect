@@ -27,8 +27,7 @@
   updated_date: '2019-05-19'
   link: https://www.imdb.com/title/tt0944947/
 
-- id: 3
-  name: The Shawshank Redemption
+- name: The Shawshank Redemption
   rate: 9.3
   review: Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.
   type: Movie

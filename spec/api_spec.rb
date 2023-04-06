@@ -42,11 +42,10 @@ describe 'Test DramaConnect Web API' do
     it 'HAPPY: should be able to get details of a single drama' do
       DramaConnect::Drama.new(DATA[2]).save
       id = Dir.glob("#{DramaConnect::STORE_DIR}/*.txt").first.split(%r{[/.]})[3] #待確定
-      print(id)
 
       get "/api/v1/dramas/#{id}"
       result = JSON.parse last_response.body
-
+      
       _(last_response.status).must_equal 200
       _(result['id']).must_equal id
     end

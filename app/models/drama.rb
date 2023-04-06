@@ -63,7 +63,7 @@ module DramaConnect
     # Query method to find one Drama
     def self.find(find_id)
       document_file = File.read("#{DramaConnect::STORE_DIR}/#{find_id}.txt")
-      Document.new JSON.parse(document_file)
+      Drama.new JSON.parse(document_file)
     end
 
     # Query method to retrieve index of all Drama
