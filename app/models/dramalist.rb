@@ -6,7 +6,7 @@ require 'sequel'
 module DramaConnect
   # models for DramaList
   class DramaList < Sequel::Model
-    one_to_many :drama
+    one_to_many :dramas
     plugin :association_dependencies, dramas: :destroy
     plugin :timestamps
 
