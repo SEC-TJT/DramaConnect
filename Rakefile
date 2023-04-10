@@ -43,6 +43,7 @@ end
 namespace :db do # rubocop:disable Metrics/BlockLength
   task :load do
     require_app(nil) # load nothing by default
+    # require_app
     require 'sequel'
 
     Sequel.extension :migration
