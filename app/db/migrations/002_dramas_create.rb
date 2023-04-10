@@ -22,7 +22,7 @@ Sequel.migration do
       DateTime :created_at
       DateTime :updated_at
 
-      unique [:dramalist_id, :name, :creator_id]
+      unique %i[dramalist_id creator_id name]
     end
   end
 end
