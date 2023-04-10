@@ -6,7 +6,7 @@ Sequel.migration do
   change do
     create_table(:dramas) do
       primary_key :id
-      foreign_key :dramalist_id, table: :dramalists
+      foreign_key :drama_list_id, table: :drama_lists
 
       String :name, null: false
       Float :rate, null: false
@@ -22,7 +22,7 @@ Sequel.migration do
       DateTime :created_at
       DateTime :updated_at
 
-      unique %i[dramalist_id creator_id name]
+      unique %i[drama_list_id creator_id name]
     end
   end
 end

@@ -4,7 +4,7 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_table(:dramalists) do
+    create_table(:drama_lists) do
       primary_key :id
 
       String :name, unique: true, null: false
