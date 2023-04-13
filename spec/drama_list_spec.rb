@@ -10,6 +10,8 @@ describe 'Test Drama List Handling' do
   end
 
   it 'HAPPY: should be able to get list of all drama lists' do
+    DramaConnect::Dramalist.create(DATA[:drama_lists][0]).save
+    DramaConnect::Dramalist.create(DATA[:drama_lists][1]).save
     get 'api/v1/dramaList'
     _(last_response.status).must_equal 200
 
@@ -19,8 +21,8 @@ describe 'Test Drama List Handling' do
 
   it 'HAPPY: should be able to get details of a single dramaList' do
     existing_list = DATA[:drama_lists][1]
-    DramaConnect::DramaList.create(existing_list).save
-    id = DramaConnect::DramaList.first.id
+    DramaConnect::Dramalist.create(existing_list).save
+    id = DramaConnect::Dramalist.first.id
 
     get "/api/v1/dramaList/#{id}"
     _(last_response.status).must_equal 200
@@ -45,9 +47,9 @@ describe 'Test Drama List Handling' do
     _(last_response.header['Location'].size).must_be :>, 0
 
     created = JSON.parse(last_response.body)['data']['data']['attributes']
-    list_db = DramaConnect::DramaList.first
+    created_db = DramaConnect::Dramalist.first(id: created['id'])
 
-    _(created['id']).must_equal list_db.id
-    _(created['name']).must_equal list_db['name']
+    _(created['id']).must_equal created_db.id
+    _(created['name']).must_equal created_db.name
   end
 end

@@ -10,7 +10,7 @@ require_relative 'test_load_all'
 
 def wipe_database
   app.DB[:dramas].delete
-  app.DB[:drama_lists].delete
+  app.DB[:dramalists].delete
 end
 
 DATA = {} # rubocop:disable Style/MutableConstant

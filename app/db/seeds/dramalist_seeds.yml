@@ -1,13 +1,9 @@
 ---
-- name: "My Watchlist"
-  description: "A list of dramas I want to watch."
-- name: "Completed Dramas"
-  description: "A list of dramas I have watched and completed."
-- name: "Favorites"
-  description: "A list of my favorite dramas."
-- name: "Romantic Dramas"
-  description: "A list of dramas with romantic themes."
-- name: "Action-Packed Dramas"
-  description: "A list of high-intensity dramas with action elements."
-- name: "Historical Dramas"
-  description: "A list of dramas set in historical periods."
+- name: Taiwan TV Show 2023
+  description: The top 20 Taiwan TV show in 2023
+  created_date: '2011-04-17'
+  updated_date: '2019-05-19'
+- name: US TV Show 2023
+  description: The top 20 US TV show in 2023
+  created_date: '2011-04-17'
+  updated_date: '2019-05-19'
