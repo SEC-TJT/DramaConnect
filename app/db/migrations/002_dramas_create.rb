@@ -19,8 +19,8 @@ Sequel.migration do
       String :year
       String :link
 
-      DateTime :created_at
-      DateTime :updated_at
+      DateTime :created_date
+      DateTime :updated_date
 
       unique %i[dramalist_id creator_id name]
     end
