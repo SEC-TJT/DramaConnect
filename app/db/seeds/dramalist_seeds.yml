@@ -1,11 +1,9 @@
 ---
-- id: addldk3f
-  name: Taiwan TV Show 2023
+- name: Taiwan TV Show 2023
   description: The top 20 Taiwan TV show in 2023
   created_date: '2011-04-17'
   updated_date: '2019-05-19'
-- id: dflkmsdg
-  name: US TV Show 2023
+- name: US TV Show 2023
   description: The top 20 US TV show in 2023
   created_date: '2011-04-17'
   updated_date: '2019-05-19'
