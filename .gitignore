@@ -3,3 +3,7 @@ _*
 .irb_history
 app/db/store/*
 config/secrets.yml
+<<<<<<< HEAD
+=======
+
+>>>>>>> add1a4986b9bbda33b2ca31e37f36e0ae104d4b9

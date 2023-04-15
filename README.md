@@ -8,8 +8,14 @@ All routes return Json
 
 - GET `/`: Root route shows if Web API is running
 - GET `api/v1/dramas/`: returns all dramas IDs
-- GET `api/v1/dramas/{ID}`: returns details about a single dramas with given ID
+- GET `api/v1/dramas/{drama_id}`: returns details about a single dramas with given ID
 - POST `api/v1/dramas/`: creates a new dramas
+- GET `api/v1/dramaList`: returns all drama list
+- GET `api/v1/dramaList/{dramaList_id}`: returns details about a single drama list with given ID
+- POST `api/v1/api/v1/dramaList`: creates a new drama list
+- GET `api/v1/dramaList/{dramaList_id}/drama/{drama_id}`: returns details about a all the dramas in a given drama list wiht id 
+- POST `api/v1/dramaList/{dramaList_id}/drama/{drama_id}`: add a existing drama to the drama list with given ID
+
 
 ## Install
 
@@ -19,12 +25,20 @@ Install this API by cloning the *relevant branch* and installing required gems f
 bundle install
 ```
 
+## Initialize Database
+```shell
+rake db:migrate
+
+# for testing
+RACK_ENV=test rake db:migrate    
+```
+
 ## Test
 
 Run the test script:
 
 ```shell
-ruby spec/api_spec.rb
+rake spec
 ```
 
 ## Execute
