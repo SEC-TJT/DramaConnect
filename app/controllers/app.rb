@@ -36,16 +36,17 @@ module DramaConnect
                 # drama_id = new_data.drama_id
                 dra_list = Dramalist.first(id: list_id)
                 new_dra = Drama.first(id: drama_id)
+                save_dra=dra_list.add_drama(new_dra)
 
-                dra_list.add_drama(new_dra)
+                raise 'Could not save new Drama' unless save_dra
 
-                if new_dra
-                  response.status = 201
-                  response['Location'] = "#{@api_route}/drama/#{new_dra.id}"
-                  { message: 'Drama saved', data: new_dra }.to_json
-                else
-                  routing.halt 400, 'Could not save drama'
-                end
+                response.status = 201
+                response['Location'] = "#{@api_route}/drama/#{new_dra.id}"
+                { message: 'Drama saved', data: new_dra }.to_json
+
+              rescue Sequel::MassAssignmentRestriction
+                # API Logger
+                routing.halt 400, { message: 'Illegal Attributes' }.to_json
 
               rescue StandardError
                 routing.halt 500, { message: 'Database error' }.to_json
@@ -78,8 +79,10 @@ module DramaConnect
             response.status = 201
             response['Location'] = "#{@list_route}/#{new_dra_list.id}"
             { message: 'Dramalist saved', data: new_dra_list }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            routing.halt 400, { message: 'Illegal Attributes' }.to_json
           rescue StandardError => e
-            routing.halt 400, { message: e.message }.to_json
+            routing.halt 500, { message: 'Unknown server error' }.to_json
           end
         end
         routing.on 'drama' do
@@ -104,14 +107,19 @@ module DramaConnect
             new_data = JSON.parse(routing.body.read)
             new_dra = Drama.new(new_data)
             raise('Could not save drama ') unless new_dra.save
+
             response.status = 201
             response['Location'] = "#{@api_route}/drama/#{new_dra.id}"
             { message: 'Drama saved', data: new_dra }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            # API Logger
+            routing.halt 400, { message: 'Illegal Attributes' }.to_json
           rescue StandardError
             routing.halt 500, { message: 'Database error' }.to_json
           end
         end
       end
     end
+    # rubocop:enable Metrics/BlockLength
   end
 end

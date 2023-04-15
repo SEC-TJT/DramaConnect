@@ -9,6 +9,8 @@ module DramaConnect
     one_to_many :dramas
     plugin :association_dependencies, dramas: :destroy
     plugin :timestamps
+    plugin :whitelist_security
+    set_allowed_columns :name, :description
 
     def to_json(options = {})
       JSON(

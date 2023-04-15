@@ -9,6 +9,9 @@ module DramaConnect
     many_to_many :dramalist
 
     plugin :timestamps
+    plugin :whitelist_security
+    set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year, :link
+    
     # Create drama by passing in hash of attributes
     def to_json(options = {})
       JSON(
