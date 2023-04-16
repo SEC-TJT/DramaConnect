@@ -11,7 +11,7 @@ module DramaConnect
     plugin :uuid, field: :id
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year, :link
+    set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year, :link,:updated_date
     
     # Create drama by passing in hash of attributes
     def to_json(options = {})

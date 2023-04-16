@@ -7,7 +7,23 @@ task default: :spec
 
 desc 'Tests API specs only'
 task :api_spec do
-  sh 'ruby spec/api_spec.rb'
+  sh 'ruby spec/intergration/api_spec.rb'
+end
+
+desc 'Tests Drama API specs only'
+task :drama_spec do
+  sh 'ruby spec/intergration/api_dramas_sepc.rb'
+end
+
+desc 'Tests Drama API specs only'
+task :drama_list_spec do
+  sh 'ruby spec/intergration/api_drama_lists_spec.rb'
+end
+
+desc 'Tests API Intergration only'
+Rake::TestTask.new(:spec) do |t|
+  t.pattern = 'spec/intergration/*_spec.rb'
+  t.warning = false
 end
 
 desc 'Test all the specs'

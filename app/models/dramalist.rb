@@ -12,7 +12,7 @@ module DramaConnect
     plugin :association_dependencies, dramas: :destroy
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :name, :description
+    set_allowed_columns :name, :description,:updated_date
 
     def to_json(options = {})
       JSON(
