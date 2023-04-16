@@ -7,6 +7,7 @@ describe 'Test Drama List Handling' do
 
   before do
     wipe_database
+    
   end
 
   it 'HAPPY: should be able to get list of all drama lists' do
@@ -56,7 +57,7 @@ describe 'Test Drama List Handling' do
     it 'HAPPY: should be able to create new drama_lists' do
       # existing_list = DATA[:drama_lists][1]
       # req_header = { 'CONTENT_TYPE' => 'application/json' }
-      post 'api/v1/dramaList', @drama_list_data.to_json, req_header
+      post 'api/v1/dramaList', @drama_list_data.to_json, @req_header
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
@@ -64,12 +65,12 @@ describe 'Test Drama List Handling' do
       created_db = DramaConnect::Dramalist.first(id: created['id'])
 
       _(created['id']).must_equal created_db.id
-      _(created['name']).must_equal @drama_list_data.name
+      _(created['name']).must_equal @drama_list_data['name']
     end
     it 'SECURITY: should not create Drama List with mass assignment' do
       bad_data = @drama_list_data.clone
       bad_data['created_time'] = '1900-01-01'
-      post 'api/v1/projects', bad_data.to_json, @req_header
+      post 'api/v1/dramaList', bad_data.to_json, @req_header
 
       _(last_response.status).must_equal 400
       _(last_response.headers['Location']).must_be_nil
