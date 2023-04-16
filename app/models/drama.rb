@@ -8,6 +8,7 @@ module DramaConnect
   class Drama < Sequel::Model
     many_to_many :dramalist
 
+    plugin :uuid, field: :id
     plugin :timestamps
     plugin :whitelist_security
     set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year, :link

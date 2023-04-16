@@ -5,7 +5,7 @@ require 'sequel'
 Sequel.migration do
   change do
     create_table(:dramas) do
-      primary_key :id
+      uuid :id, primary_key: true
       foreign_key :dramalist_id, table: :dramalists
 
       String :name, null: false

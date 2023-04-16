@@ -7,6 +7,8 @@ module DramaConnect
   # models for DramaList
   class Dramalist < Sequel::Model
     one_to_many :dramas
+    
+    plugin :uuid, field: :id
     plugin :association_dependencies, dramas: :destroy
     plugin :timestamps
     plugin :whitelist_security
