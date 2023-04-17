@@ -9,7 +9,7 @@ Sequel.migration do
       foreign_key :dramalist_id, table: :dramalists
 
       String :name_secure, null: false
-      String :rate_secure, null: false
+      Float :rate_secure, null: false
       String :review_secure, null: false
       String :type, null: false
       String :category, null: false
