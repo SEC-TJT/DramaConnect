@@ -58,6 +58,7 @@ describe 'Test Drama Handling' do
     it 'HAPPY: should be able to create new dramas' do
       # req_header = { 'CONTENT_TYPE' => 'application/json' }
       # api/v1/dramaList/[ID]/drama
+      print @drama_data
       post "api/v1/dramaList/#{@drama_list.id}/drama",
            @drama_data.to_json, @req_header
       _(last_response.status).must_equal 201
