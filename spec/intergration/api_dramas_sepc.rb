@@ -9,7 +9,7 @@ describe 'Test Drama Handling' do
     wipe_database
     # puts DATA[:drama_lists]
     DATA[:drama_lists].each do |drama_list|
-      puts drama_list
+      # puts drama_list
       DramaConnect::Dramalist.create(drama_list).save
     end
   end
@@ -30,7 +30,7 @@ describe 'Test Drama Handling' do
   it 'HAPPY: should be able to get details of a single drama' do
     drama_data = DATA[:dramas][1]
     drama_list = DramaConnect::Dramalist.first
-    drama = drama_list.add_document(drama_data)
+    drama = drama_list.add_drama(drama_data)
 
     # GET api/v1/dramas/[drama_id]
     get "/api/v1/dramas/#{drama.id}"

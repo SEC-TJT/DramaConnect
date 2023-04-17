@@ -11,7 +11,7 @@ module DramaConnect
     plugin :uuid, field: :id
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year, :link,:updated_date
+    set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year, :link, :updated_date
     
     # Secure getters and setters
     def name
@@ -27,7 +27,7 @@ module DramaConnect
     end
 
     def rate=(plaintext)
-      self.rate_secure = SecureDB.encrypt(plaintext)
+      self.content_secure = SecureDB.encrypt(plaintext)
     end
 
     def review
