@@ -27,7 +27,7 @@ module DramaConnect
     end
 
     def rate=(plaintext)
-      self.rate_secure = SecureDB.encrypt(plaintext)
+      self.rate_secure = SecureDB.encrypt(plaintext.to_s)
     end
 
     def review

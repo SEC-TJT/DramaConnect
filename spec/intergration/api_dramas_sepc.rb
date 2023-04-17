@@ -8,7 +8,7 @@ describe 'Test Drama Handling' do
   before do
     wipe_database
     # puts DATA[:drama_lists]
-    DATA[:drama_lists].each do |drama_list|
+    DATA[:dramalists].each do |drama_list|
       # puts drama_list
       DramaConnect::Dramalist.create(drama_list).save
     end
@@ -33,6 +33,8 @@ describe 'Test Drama Handling' do
     drama = drama_list.add_drama(drama_data)
 
     # GET api/v1/dramas/[drama_id]
+    print drama.id
+    # print type(drama.id)
     get "/api/v1/dramas/#{drama.id}"
     _(last_response.status).must_equal 200
 
