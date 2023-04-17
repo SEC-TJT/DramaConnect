@@ -9,7 +9,7 @@ Sequel.migration do
       foreign_key :dramalist_id, table: :dramalists
 
       String :name_secure, null: false
-      Float :rate_secure, null: false
+      String :rate_secure, null: false
       String :review_secure, null: false
       String :type, null: false
       String :category, null: false
@@ -22,7 +22,7 @@ Sequel.migration do
       DateTime :created_date
       DateTime :updated_date
 
-      unique %i[dramalist_id creator_id name]
+      unique %i[dramalist_id creator_id name_secure]
     end
   end
 end

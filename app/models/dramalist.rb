@@ -16,11 +16,11 @@ module DramaConnect
 
     # Secure getters and setters
     def name
-      SecureDB.decrypt(content_secure)
+      SecureDB.decrypt(name_secure)
     end
 
     def name=(plaintext)
-      self.content_secure = SecureDB.encrypt(plaintext)
+      self.name_secure = SecureDB.encrypt(plaintext)
     end
     
     def description
