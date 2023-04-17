@@ -52,14 +52,15 @@ describe 'Test Drama Handling' do
     before do
       @drama_list = DramaConnect::Dramalist.first
       @drama_data = DATA[:dramas][1]
+      @drama = @drama_list.add_drama(@drama_data)
       @req_header = { 'CONTENT_TYPE' => 'application/json' }
     end
 
     it 'HAPPY: should be able to create new dramas' do
       # req_header = { 'CONTENT_TYPE' => 'application/json' }
       # api/v1/dramaList/[ID]/drama
-      print @drama_data
-      post "api/v1/dramaList/#{@drama_list.id}/drama",
+      print @drama.id
+      post "api/v1/dramaList/#{@drama_list.id}/drama/#{@drama.id}",
            @drama_data.to_json, @req_header
       _(last_response.status).must_equal 201
       _(last_response.headers['Location'].size).must_be :>, 0
@@ -75,7 +76,7 @@ describe 'Test Drama Handling' do
     it 'SECURITY: should not create dramas with mass assignment' do
       bad_data = @drama_data.clone
       bad_data['created_date'] = '1900-01-01'
-      post "api/v1/dramaList/#{@drama_list.id}/drama",
+      post "api/v1/drama",
            bad_data.to_json, @req_header
 
       _(last_response.status).must_equal 400

@@ -23,7 +23,7 @@ module DramaConnect
     end
 
     def rate
-      SecureDB.decrypt(rate_secure)
+      SecureDB.decrypt(rate_secure).to_f
     end
 
     def rate=(plaintext)
