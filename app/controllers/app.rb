@@ -22,7 +22,7 @@ module DramaConnect
 
           routing.on String do |list_id|
             routing.on 'drama' do
-              # GET api/v1/dramaList/[list_id]/dramas
+              # GET api/v1/dramaList/[list_id]/drama
               routing.get do
                 output = { data: Dramalist.first(id: list_id).dramas }
                 JSON.pretty_generate(output)
@@ -30,7 +30,7 @@ module DramaConnect
                 routing.halt 404, message: 'Could not find dramas'
               end
 
-              # POST api/v1/dramaList/[ID]/dramas
+              # POST api/v1/dramaList/[ID]/drama
               routing.post String do |drama_id|
                 # new_data = JSON.parse(routing.body.read)
                 # drama_id = new_data.drama_id
@@ -86,7 +86,7 @@ module DramaConnect
           end
         end
         routing.on 'drama' do
-          # GET api/v1/dramas/[drama_id]
+          # GET api/v1/drama/[drama_id]
           routing.get String do |drama_id|
             drama = Drama.first(id: drama_id)
             drama ? drama.to_json : raise('Drama not found')
@@ -94,7 +94,7 @@ module DramaConnect
             routing.halt 404, { message: e.message }.to_json
           end
 
-          # GET api/v1/dramas
+          # GET api/v1/drama
           routing.get do
             output = { data: Drama.all }
             JSON.pretty_generate(output)
@@ -102,7 +102,7 @@ module DramaConnect
             routing.halt 404, message: 'Could not find dramas'
           end
 
-          # POST api/v1/dramas
+          # POST api/v1/drama
           routing.post do
             new_data = JSON.parse(routing.body.read)
             new_dra = Drama.new(new_data)

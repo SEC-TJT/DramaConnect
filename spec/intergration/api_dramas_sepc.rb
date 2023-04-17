@@ -20,11 +20,11 @@ describe 'Test Drama Handling' do
       drama_list.add_drama(drama)
     end
      # GET api/v1/dramaList/[list_id]/dramas
-    get "api/v1/dramaList/#{drama_list.id}/dramas"
+    get "api/v1/dramaList/#{drama_list.id}/drama"
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data'].count).must_equal 2
+    _(result['data'].count).must_equal 6
   end
 
   it 'HAPPY: should be able to get details of a single drama' do
@@ -32,14 +32,14 @@ describe 'Test Drama Handling' do
     drama_list = DramaConnect::Dramalist.first
     drama = drama_list.add_drama(drama_data)
 
-    # GET api/v1/dramas/[drama_id]
-    print drama.id
-    # print type(drama.id)
-    get "/api/v1/dramas/#{drama.id}"
+    # GET api/v1/drama/[drama_id]
+    # print drama.id
+    get "/api/v1/drama/#{drama.id}"
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data']['attributes']['id']).must_equal drama.id
+    # print result['data']['attributes']
+    _(result['data']['attributes']['review']).must_equal drama.review
     _(result['data']['attributes']['name']).must_equal drama_data['name']
   end
   it 'SAD: should return error if unknown drama requested' do
@@ -56,10 +56,10 @@ describe 'Test Drama Handling' do
     end
 
     it 'HAPPY: should be able to create new dramas' do
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
-      # api/v1/dramaList/[ID]/dramas
-      post "api/v1/dramaList/#{@drama_list.id}/dramas",
-           @drama_data.to_json, req_header
+      # req_header = { 'CONTENT_TYPE' => 'application/json' }
+      # api/v1/dramaList/[ID]/drama
+      post "api/v1/dramaList/#{@drama_list.id}/drama",
+           @drama_data.to_json, @req_header
       _(last_response.status).must_equal 201
       _(last_response.headers['Location'].size).must_be :>, 0
 
@@ -74,7 +74,7 @@ describe 'Test Drama Handling' do
     it 'SECURITY: should not create dramas with mass assignment' do
       bad_data = @drama_data.clone
       bad_data['created_date'] = '1900-01-01'
-      post "api/v1/projects/#{@drama_list.id}/dramas",
+      post "api/v1/dramaList/#{@drama_list.id}/drama",
            bad_data.to_json, @req_header
 
       _(last_response.status).must_equal 400

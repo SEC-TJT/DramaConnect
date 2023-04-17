@@ -53,8 +53,8 @@ module DramaConnect
           data: {
             type: 'drama',
             attributes: {
-              type:,
               id:,
+              type:,
               name:,
               category:,
               creator_id:,
