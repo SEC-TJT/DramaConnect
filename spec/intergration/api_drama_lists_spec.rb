@@ -11,8 +11,8 @@ describe 'Test Drama List Handling' do
   end
 
   it 'HAPPY: should be able to get list of all drama lists' do
-    DramaConnect::Dramalist.create(DATA[:drama_lists][0]).save
-    DramaConnect::Dramalist.create(DATA[:drama_lists][1]).save
+    DramaConnect::Dramalist.create(DATA[:dramalists][0]).save
+    DramaConnect::Dramalist.create(DATA[:dramalists][1]).save
     get 'api/v1/dramaList'
     _(last_response.status).must_equal 200
 
@@ -21,7 +21,7 @@ describe 'Test Drama List Handling' do
   end
 
   it 'HAPPY: should be able to get details of a single dramaList' do
-    existing_list = DATA[:drama_lists][1]
+    existing_list = DATA[:dramalists][1]
     DramaConnect::Dramalist.create(existing_list).save
     id = DramaConnect::Dramalist.first.id
 
@@ -39,8 +39,8 @@ describe 'Test Drama List Handling' do
     _(last_response.status).must_equal 404
   end
   it 'SECURITY: should prevent basic SQL injection targeting IDs' do
-    existing_list1 = DATA[:drama_lists][0]
-    existing_list2 = DATA[:drama_lists][1]
+    existing_list1 = DATA[:dramalists][0]
+    existing_list2 = DATA[:dramalists][1]
     DramaConnect::Dramalist.create(existing_list1)
     DramaConnect::Dramalist.create(existing_list2)
     get 'api/v1/dramaList/2%20or%20id%3E0'
@@ -52,7 +52,7 @@ describe 'Test Drama List Handling' do
   describe 'Creating New Drama List' do
     before do
       @req_header = { 'CONTENT_TYPE' => 'application/json' }
-      @drama_list_data = DATA[:drama_lists][1]
+      @drama_list_data = DATA[:dramalists][1]
     end
     it 'HAPPY: should be able to create new drama_lists' do
       # existing_list = DATA[:drama_lists][1]

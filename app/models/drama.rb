@@ -15,35 +15,35 @@ module DramaConnect
     
     # Secure getters and setters
     def name
-      SecureDB.decrypt(description_secure)
+      SecureDB.decrypt(name_secure)
     end
 
     def name=(plaintext)
-      self.description_secure = SecureDB.encrypt(plaintext)
+      self.name_secure = SecureDB.encrypt(plaintext)
     end
 
     def rate
-      SecureDB.decrypt(content_secure)
+      SecureDB.decrypt(rate_secure)
     end
 
     def rate=(plaintext)
-      self.content_secure = SecureDB.encrypt(plaintext)
+      self.rate_secure = SecureDB.encrypt(plaintext)
     end
 
     def review
-      SecureDB.decrypt(description_secure)
+      SecureDB.decrypt(review_secure)
     end
 
     def review=(plaintext)
-      self.description_secure = SecureDB.encrypt(plaintext)
+      self.review_secure = SecureDB.encrypt(plaintext)
     end
 
     def picture_url
-      SecureDB.decrypt(content_secure)
+      SecureDB.decrypt(picture_url_secure)
     end
 
     def picture_url=(plaintext)
-      self.content_secure = SecureDB.encrypt(plaintext)
+      self.picture_url_secure = SecureDB.encrypt(plaintext)
     end
 
     # Create drama by passing in hash of attributes

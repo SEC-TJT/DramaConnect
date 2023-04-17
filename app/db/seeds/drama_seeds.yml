@@ -1,6 +1,6 @@
 ---
 - name: Breaking Bad
-  rate: 9.5
+  rate: '9.3'
   review: A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family's future.
   type: TV Series
   category: Drama, Crime, Thriller
@@ -12,7 +12,7 @@
   link: https://www.imdb.com/title/tt0903747/
 
 - name: Game of Thrones
-  rate: 9.3
+  rate: '9.5'
   review: Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.
   type: TV Series
   category: Action, Adventure, Drama
@@ -24,7 +24,7 @@
   link: https://www.imdb.com/title/tt0944947/
 
 - name: The Shawshank Redemption
-  rate: 9.3
+  rate: '9.2'
   review: Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.
   type: Movie
   category: Drama
