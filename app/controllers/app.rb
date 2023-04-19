@@ -26,7 +26,8 @@ module DramaConnect
               routing.get do
                 output = { data: Dramalist.first(id: list_id).dramas }
                 JSON.pretty_generate(output)
-              rescue StandardError
+              rescue StandardError => e
+                Api.logger.error "UNKOWN ERROR: #{e.message}"
                 routing.halt 404, message: 'Could not find dramas'
               end
 
@@ -58,6 +59,7 @@ module DramaConnect
               dra_list = Dramalist.first(id: list_id)
               dra_list ? dra_list.to_json : raise('Dramalist not found')
             rescue StandardError => e
+              Api.logger.error "UNKOWN ERROR: #{e.message}"
               routing.halt 404, { message: e.message }.to_json
             end
           end
@@ -66,7 +68,8 @@ module DramaConnect
           routing.get do
             output = { data: Dramalist.all }
             JSON.pretty_generate(output)
-          rescue StandardError
+          rescue StandardError => e
+            Api.logger.error "UNKOWN ERROR: #{e.message}"
             routing.halt 404, { message: 'Could not find dramaList' }.to_json
           end
 
@@ -80,8 +83,10 @@ module DramaConnect
             response['Location'] = "#{@list_route}/#{new_dra_list.id}"
             { message: 'Dramalist saved', data: new_dra_list }.to_json
           rescue Sequel::MassAssignmentRestriction
+            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
             routing.halt 400, { message: 'Illegal Attributes' }.to_json
           rescue StandardError => e
+            Api.logger.error "UNKOWN ERROR: #{e.message}"
             routing.halt 500, { message: 'Unknown server error' }.to_json
           end
         end
@@ -91,6 +96,7 @@ module DramaConnect
             drama = Drama.first(id: drama_id)
             drama ? drama.to_json : raise('Drama not found')
           rescue StandardError => e
+            Api.logger.error "UNKOWN ERROR: #{e.message}"
             routing.halt 404, { message: e.message }.to_json
           end
 
@@ -98,7 +104,8 @@ module DramaConnect
           routing.get do
             output = { data: Drama.all }
             JSON.pretty_generate(output)
-          rescue StandardError
+          rescue StandardError => e
+            Api.logger.error "UNKOWN ERROR: #{e.message}"
             routing.halt 404, message: 'Could not find dramas'
           end
 
@@ -113,8 +120,10 @@ module DramaConnect
             { message: 'Drama saved', data: new_dra }.to_json
           rescue Sequel::MassAssignmentRestriction
             # API Logger
+            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
             routing.halt 400, { message: 'Illegal Attributes' }.to_json
-          rescue StandardError
+          rescue StandardError => e
+            Api.logger.error "UNKOWN ERROR: #{e.message}"
             routing.halt 500, { message: 'Database error' }.to_json
           end
         end
