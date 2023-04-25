@@ -66,7 +66,7 @@ namespace :db do
   require 'sequel'
 
   Sequel.extension :migration
-  app = Credence::Api # rubocop:disable Lint/UselessAssignment
+  app = DramaConnect::Api
 
   desc 'Run migrations'
   task migrate: :print_env do

@@ -38,7 +38,7 @@ describe 'Test Account Handling' do
       _(last_response.headers['Location'].size).must_be :>, 0
 
       created = JSON.parse(last_response.body)['data']
-      account = Credence::Account.first
+      account = DramaConnect::Account.first
 
       _(created['id']).must_equal account.id
       _(created['username']).must_equal @account_data['username']

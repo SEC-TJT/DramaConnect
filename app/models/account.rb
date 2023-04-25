@@ -31,7 +31,7 @@ module DramaConnect
     end
 
     def password?(try_password)
-      digest = Credence::Password.from_digest(password_digest)
+      digest = DramaConnect::Password.from_digest(password_digest)
       digest.correct?(try_password)
     end
 
