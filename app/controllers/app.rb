@@ -6,7 +6,7 @@ require 'json'
 
 module DramaConnect
   # Web controller for DramaConnect API
-  class Api < Roda
+  class Api < Roda # rubocop:disable Metrics/ClassLength
     plugin :halt
 
     route do |routing| # rubocop:disable Metrics/BlockLength
@@ -18,6 +18,36 @@ module DramaConnect
 
       @api_root = 'api/v1'
       routing.on @api_root do # rubocop:disable Metrics/BlockLength
+        routing.on 'accounts' do
+          @account_route = "#{@api_root}/accounts"
+
+          routing.on String do |username|
+            # GET api/v1/accounts/[username]
+            routing.get do
+              account = Account.first(username:)
+              account ? account.to_json : raise('Account not found')
+            rescue StandardError
+              routing.halt 404, { message: error.message }.to_json
+            end
+          end
+
+          # POST api/v1/accounts
+          routing.post do
+            new_data = JSON.parse(routing.body.read)
+            new_account = Account.new(new_data)
+            raise('Could not save account') unless new_account.save
+
+            response.status = 201
+            response['Location'] = "#{@account_route}/#{new_account.id}"
+            { message: 'Dramalist saved', data: new_account }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            routing.halt 400, { message: 'Illegal Request' }.to_json
+          rescue StandardError => e
+            puts e.inspect
+            routing.halt 500, { message: error.message }.to_json
+          end
+        end
+
         routing.on 'dramaList' do # rubocop:disable Metrics/BlockLength
           @list_route = "#{@api_root}/dramaList"
 
