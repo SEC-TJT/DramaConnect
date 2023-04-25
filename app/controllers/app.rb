@@ -39,7 +39,7 @@ module DramaConnect
 
             response.status = 201
             response['Location'] = "#{@account_route}/#{new_account.id}"
-            { message: 'Dramalist saved', data: new_account }.to_json
+            { message: 'Account created', data: new_account }.to_json
           rescue Sequel::MassAssignmentRestriction
             routing.halt 400, { message: 'Illegal Request' }.to_json
           rescue StandardError => e

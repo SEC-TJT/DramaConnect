@@ -20,6 +20,11 @@ task :drama_list_spec do
   sh 'ruby spec/intergration/api_drama_lists_spec.rb'
 end
 
+desc 'Rerun tests on live code changes'
+task :respec do
+  sh 'rerun -c rake spec'
+end
+
 desc 'Tests API Intergration only'
 Rake::TestTask.new(:spec) do |t|
   t.pattern = 'spec/intergration/*_spec.rb'
@@ -56,34 +61,28 @@ task console: :print_env do
   sh 'pry -r ./spec/test_load_all'
 end
 
-namespace :db do # rubocop:disable Metrics/BlockLength
-  task :load do
-    require_app(nil) # load nothing by default
-    # require_app
-    require 'sequel'
+namespace :db do
+  require_app(nil) # loads config code files only
+  require 'sequel'
 
-    Sequel.extension :migration
-    @app = DramaConnect::Api
-  end
-
-  task :load_models do
-    require_app('models')
-  end
+  Sequel.extension :migration
+  app = Credence::Api # rubocop:disable Lint/UselessAssignment
 
   desc 'Run migrations'
-  task migrate: %i[load print_env] do
+  task migrate: :print_env do
     puts 'Migrating database to latest'
-    Sequel::Migrator.run(@app.DB, 'app/db/migrations')
+    Sequel::Migrator.run(app.DB, 'app/db/migrations')
   end
 
-  desc 'Destroy data in database; maintain tables'
-  task delete: :load_models do
-    DramaConnect::DramaList.dataset.destroy
+  desc 'Delete database'
+  task :delete do
+    app.DB[:dramas].delete
+    app.DB[:dramalists].delete
   end
 
   desc 'Delete dev or test database file'
-  task drop: :load do
-    if @app.environment == :production
+  task :drop do
+    if app.environment == :production
       puts 'Cannot wipe production database!'
       return
     end
