@@ -6,6 +6,7 @@ Sequel.migration do
   change do
     create_table(:dramalists) do
       uuid :id, primary_key: true
+      foreign_key :owner_id, :accounts
 
       String :name_secure, unique: true, null: false
       String :description_secure, unique: true

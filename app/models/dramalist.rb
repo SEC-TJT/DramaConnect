@@ -7,12 +7,18 @@ module DramaConnect
   # models for DramaList
   class Dramalist < Sequel::Model
     one_to_many :dramas
-    
+
+    many_to_one :owner, class: :'DramaConnect::Account'
+    many_to_many :visitor,
+                 class: :'DramaConnect::Account',
+                 join_table: :accounts_dramalists,
+                 left_key: :dramalist_id, right_key: :visitor_id
+
     plugin :uuid, field: :id
-    plugin :association_dependencies, dramas: :destroy
+    plugin :association_dependencies, dramas: :destroy, visitor: :nullify
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :name, :description,:updated_date
+    set_allowed_columns :name, :description, :updated_date
 
     # Secure getters and setters
     def name
@@ -22,7 +28,7 @@ module DramaConnect
     def name=(plaintext)
       self.name_secure = SecureDB.encrypt(plaintext)
     end
-    
+
     def description
       SecureDB.decrypt(description_secure)
     end
@@ -31,7 +37,7 @@ module DramaConnect
       self.description_secure = SecureDB.encrypt(plaintext)
     end
 
-    def to_json(options = {})
+    def to_json(options = {}) # rubocop:disable Metrics/MethodLength
       JSON(
         {
           data: {
@@ -39,7 +45,7 @@ module DramaConnect
             attributes: {
               id:,
               name:,
-              description:,
+              description:
             }
           }
         },

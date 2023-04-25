@@ -1,14 +1,15 @@
 # frozen_string_literal: true
+
 # require 'logger'
 require 'roda'
 require 'json'
 
 module DramaConnect
   # Web controller for DramaConnect API
-  class Api < Roda
+  class Api < Roda # rubocop:disable Metrics/ClassLength
     plugin :halt
 
-    route do |routing|
+    route do |routing| # rubocop:disable Metrics/BlockLength
       response['Content-Type'] = 'application/json'
 
       routing.root do
@@ -16,11 +17,41 @@ module DramaConnect
       end
 
       @api_root = 'api/v1'
-      routing.on @api_root do
-        routing.on 'dramaList' do
+      routing.on @api_root do # rubocop:disable Metrics/BlockLength
+        routing.on 'accounts' do
+          @account_route = "#{@api_root}/accounts"
+
+          routing.on String do |username|
+            # GET api/v1/accounts/[username]
+            routing.get do
+              account = Account.first(username:)
+              account ? account.to_json : raise('Account not found')
+            rescue StandardError
+              routing.halt 404, { message: error.message }.to_json
+            end
+          end
+
+          # POST api/v1/accounts
+          routing.post do
+            new_data = JSON.parse(routing.body.read)
+            new_account = Account.new(new_data)
+            raise('Could not save account') unless new_account.save
+
+            response.status = 201
+            response['Location'] = "#{@account_route}/#{new_account.id}"
+            { message: 'Account created', data: new_account }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            routing.halt 400, { message: 'Illegal Request' }.to_json
+          rescue StandardError => e
+            puts e.inspect
+            routing.halt 500, { message: error.message }.to_json
+          end
+        end
+
+        routing.on 'dramaList' do # rubocop:disable Metrics/BlockLength
           @list_route = "#{@api_root}/dramaList"
 
-          routing.on String do |list_id|
+          routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
             routing.on 'drama' do
               # GET api/v1/dramaList/[list_id]/drama
               routing.get do
@@ -90,7 +121,7 @@ module DramaConnect
             routing.halt 500, { message: 'Unknown server error' }.to_json
           end
         end
-        routing.on 'drama' do
+        routing.on 'drama' do # rubocop:disable Metrics/BlockLength
           # GET api/v1/drama/[drama_id]
           routing.get String do |drama_id|
             drama = Drama.first(id: drama_id)
@@ -129,6 +160,5 @@ module DramaConnect
         end
       end
     end
-    # rubocop:enable Metrics/BlockLength
   end
 end
