@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # require 'logger'
 require 'roda'
 require 'json'
@@ -8,7 +9,7 @@ module DramaConnect
   class Api < Roda
     plugin :halt
 
-    route do |routing|
+    route do |routing| # rubocop:disable Metrics/BlockLength
       response['Content-Type'] = 'application/json'
 
       routing.root do
@@ -16,11 +17,11 @@ module DramaConnect
       end
 
       @api_root = 'api/v1'
-      routing.on @api_root do
-        routing.on 'dramaList' do
+      routing.on @api_root do # rubocop:disable Metrics/BlockLength
+        routing.on 'dramaList' do # rubocop:disable Metrics/BlockLength
           @list_route = "#{@api_root}/dramaList"
 
-          routing.on String do |list_id|
+          routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
             routing.on 'drama' do
               # GET api/v1/dramaList/[list_id]/drama
               routing.get do
@@ -90,7 +91,7 @@ module DramaConnect
             routing.halt 500, { message: 'Unknown server error' }.to_json
           end
         end
-        routing.on 'drama' do
+        routing.on 'drama' do # rubocop:disable Metrics/BlockLength
           # GET api/v1/drama/[drama_id]
           routing.get String do |drama_id|
             drama = Drama.first(id: drama_id)
