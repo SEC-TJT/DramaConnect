@@ -22,8 +22,8 @@ module DramaConnect
 
     plugin :timestamps, update_on_create: true
 
-    def projects
-      owned_projects + collaborations
+    def drama_list
+      owned_dramalists + visiting
     end
 
     def password=(new_password)
