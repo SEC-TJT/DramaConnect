@@ -11,7 +11,7 @@ module DramaConnect
     many_to_many :visiting,
                  class: :'DramaConnect::Dramalist',
                  join_table: :accounts_dramalists,
-                 left_key: :vistor_id, right_key: :dramalist_id
+                 left_key: :visitor_id, right_key: :dramalist_id
 
     plugin :association_dependencies,
            owned_dramalists: :destroy,
@@ -22,7 +22,7 @@ module DramaConnect
 
     plugin :timestamps, update_on_create: true
 
-    def drama_list
+    def dramalists
       owned_dramalists + visiting
     end
 

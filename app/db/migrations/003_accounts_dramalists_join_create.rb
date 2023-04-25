@@ -4,6 +4,6 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_join_table(vistor_id: :accounts, dramalist_id: :dramalists)
+    create_join_table(visitor_id: :accounts, dramalist_id: :dramalists)
   end
 end

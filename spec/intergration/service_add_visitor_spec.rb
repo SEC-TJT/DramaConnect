@@ -2,7 +2,7 @@
 
 require_relative '../spec_helper'
 
-describe 'Test AddVistorToDramalist service' do
+describe 'Test AddVisitorToDramalist service' do
   before do
     wipe_database
 
