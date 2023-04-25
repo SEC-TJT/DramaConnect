@@ -10,8 +10,8 @@ module DramaConnect
     one_to_many :owned_dramalists, class: :'DramaConnect::Dramalist', key: :owner_id
     many_to_many :visiting,
                  class: :'DramaConnect::Dramalist',
-                 join_table: :accounts_drama_lists,
-                 left_key: :vistor_id, right_key: :drama_list_id
+                 join_table: :accounts_dramalists,
+                 left_key: :vistor_id, right_key: :dramalist_id
 
     plugin :association_dependencies,
            owned_dramalists: :destroy,
