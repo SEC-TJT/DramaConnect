@@ -11,7 +11,7 @@ module DramaConnect
     many_to_one :owner, class: :'DramaConnect::Account'
     many_to_many :vistor,
                  class: :'DramaConnect::Account',
-                 join_table: :accounts_drama_lists,
+                 join_table: :accounts_dramalists,
                  left_key: :drama_list_id, right_key: :vistor_id
 
     plugin :uuid, field: :id
