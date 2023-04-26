@@ -7,14 +7,11 @@ API to store the Drama Review To Your Friends
 All routes return Json
 
 - GET `/`: Root route shows if Web API is running
-- GET `api/v1/dramas/`: returns all dramas IDs
-- GET `api/v1/dramas/{drama_id}`: returns details about a single dramas with given ID
-- POST `api/v1/dramas/`: creates a new dramas
 - GET `api/v1/dramaList`: returns all drama list
 - GET `api/v1/dramaList/{dramaList_id}`: returns details about a single drama list with given ID
 - POST `api/v1/api/v1/dramaList`: creates a new drama list
 - GET `api/v1/dramaList/{dramaList_id}/drama/{drama_id}`: returns details about a all the dramas in a given drama list wiht id 
-- POST `api/v1/dramaList/{dramaList_id}/drama/{drama_id}`: add a existing drama to the drama list with given ID
+- POST `api/v1/dramaList/{dramaList_id}/drama`: create a new drama to the drama list with given ID
 
 
 ## Install
