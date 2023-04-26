@@ -62,26 +62,23 @@ module DramaConnect
                 routing.halt 404, message: 'Could not find dramas'
               end
 
-              # POST api/v1/dramaList/[ID]/drama
-              routing.post String do |drama_id|
-                # new_data = JSON.parse(routing.body.read)
-                # drama_id = new_data.drama_id
+              # POST api/v1/dramaList/[list_id]/drama
+              routing.post do
+                new_data = JSON.parse(routing.body.read)
                 dra_list = Dramalist.first(id: list_id)
-                new_dra = Drama.first(id: drama_id)
-                save_dra=dra_list.add_drama(new_dra)
-
-                raise 'Could not save new Drama' unless save_dra
+                puts new_data
+                puts dra_list
+                new_dra = dra_list.add_drama(new_data)
+                raise 'Could not save drama' unless new_dra
 
                 response.status = 201
                 response['Location'] = "#{@api_route}/drama/#{new_dra.id}"
                 { message: 'Drama saved', data: new_dra }.to_json
-
               rescue Sequel::MassAssignmentRestriction
-                # API Logger
+                Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
                 routing.halt 400, { message: 'Illegal Attributes' }.to_json
-
-              rescue StandardError
-                routing.halt 500, { message: 'Database error' }.to_json
+              rescue StandardError => e
+                routing.halt 500, { message: e.message }.to_json
               end
             end
 
@@ -129,33 +126,6 @@ module DramaConnect
           rescue StandardError => e
             Api.logger.error "UNKOWN ERROR: #{e.message}"
             routing.halt 404, { message: e.message }.to_json
-          end
-
-          # GET api/v1/drama
-          routing.get do
-            output = { data: Drama.all }
-            JSON.pretty_generate(output)
-          rescue StandardError => e
-            Api.logger.error "UNKOWN ERROR: #{e.message}"
-            routing.halt 404, message: 'Could not find dramas'
-          end
-
-          # POST api/v1/drama
-          routing.post do
-            new_data = JSON.parse(routing.body.read)
-            new_dra = Drama.new(new_data)
-            raise('Could not save drama ') unless new_dra.save
-
-            response.status = 201
-            response['Location'] = "#{@api_route}/drama/#{new_dra.id}"
-            { message: 'Drama saved', data: new_dra }.to_json
-          rescue Sequel::MassAssignmentRestriction
-            # API Logger
-            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
-            routing.halt 400, { message: 'Illegal Attributes' }.to_json
-          rescue StandardError => e
-            Api.logger.error "UNKOWN ERROR: #{e.message}"
-            routing.halt 500, { message: 'Database error' }.to_json
           end
         end
       end
