@@ -13,7 +13,7 @@ describe 'Test Authentication Routes' do
   describe 'Account Authentication' do
     before do
       @account_data = DATA[:accounts][1]
-      @account = Credence::Account.create(@account_data)
+      @account = DramaConnect::Account.create(@account_data)
     end
 
     it 'HAPPY: should authenticate valid credentials' do

@@ -38,7 +38,6 @@ describe 'Test Drama Handling' do
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    print('res:', result)
     _(result['attributes']['id']).must_equal dra.id
     _(result['attributes']['name']).must_equal dra_data['name']
   end
