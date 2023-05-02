@@ -13,6 +13,15 @@ module DramaConnect
 
       routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
         routing.on 'drama' do
+          # GET api/v1/dramaList/[list_id]/drama/[drama_id]
+          routing.get String do |drama_id|
+            drama = Drama.where(dramalist_id: list_id, id: drama_id).first
+            drama ? drama.to_json : raise('Drama not found')
+          rescue StandardError => e
+            Api.logger.error "UNKOWN ERROR: #{e.message}"
+            routing.halt 404, { message: e.message }.to_json
+          end
+
           # GET api/v1/dramaList/[list_id]/drama
           routing.get do
             output = { data: Dramalist.first(id: list_id).dramas }
@@ -79,17 +88,17 @@ module DramaConnect
       end
     end
 
-    route('drama') do |routing|
-      # routing.on 'drama' do
-      # GET api/v1/drama/[drama_id]
-      routing.get String do |drama_id|
-        drama = Drama.first(id: drama_id)
-        drama ? drama.to_json : raise('Drama not found')
-      rescue StandardError => e
-        Api.logger.error "UNKOWN ERROR: #{e.message}"
-        routing.halt 404, { message: e.message }.to_json
-      end
-    end
+    # route('drama') do |routing|
+    #   # routing.on 'drama' do
+    #   # GET api/v1/drama/[drama_id]
+    #   routing.get String do |drama_id|
+    #     drama = Drama.first(id: drama_id)
+    #     drama ? drama.to_json : raise('Drama not found')
+    #   rescue StandardError => e
+    #     Api.logger.error "UNKOWN ERROR: #{e.message}"
+    #     routing.halt 404, { message: e.message }.to_json
+    #   end
+    # end
     # rubocop:enable Metrics/BlockLength
   end
 end

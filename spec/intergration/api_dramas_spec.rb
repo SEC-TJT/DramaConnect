@@ -15,7 +15,7 @@ describe 'Test Drama Handling' do
 
   it 'HAPPY: should be able to get list of all dramas' do
     dra_list = DramaConnect::Dramalist.first
-    DATA[:dramalists].each do |drama|
+    DATA[:dramas].each do |drama|
       dra_list.add_drama(drama)
     end
 
@@ -23,7 +23,7 @@ describe 'Test Drama Handling' do
     _(last_response.status).must_equal 200
 
     result = JSON.parse(last_response.body)['data']
-    _(result.count).must_equal 4
+    _(result.count).must_equal 6
     result.each do |doc|
       _(doc['type']).must_equal 'drama'
     end
@@ -38,13 +38,14 @@ describe 'Test Drama Handling' do
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data']['attributes']['id']).must_equal dra.id
-    _(result['data']['attributes']['name']).must_equal dra_data['name']
+    print('res:', result)
+    _(result['attributes']['id']).must_equal dra.id
+    _(result['attributes']['name']).must_equal dra_data['name']
   end
 
   it 'SAD: should return error if unknown drama requested' do
-    dra_list = DramaConnect::Dramalist.first
-    get "/api/v1/drama/foobar"
+    dra_list = DramaConnect::Dramalist.first # rubocop:disable Lint/UselessAssignment
+    get '/api/v1/drama/foobar'
 
     _(last_response.status).must_equal 404
   end
@@ -63,7 +64,7 @@ describe 'Test Drama Handling' do
       _(last_response.status).must_equal 201
       _(last_response.headers['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['attributes']
       dra = DramaConnect::Drama.first
 
       _(created['id']).must_equal dra.id
