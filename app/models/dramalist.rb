@@ -40,14 +40,12 @@ module DramaConnect
     def to_json(options = {}) # rubocop:disable Metrics/MethodLength
       JSON(
         {
-          data: {
             type: 'dramalist',
             attributes: {
               id:,
               name:,
               description:
             }
-          }
         },
         options
       )

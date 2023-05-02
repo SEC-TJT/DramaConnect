@@ -11,8 +11,9 @@ module DramaConnect
     plugin :uuid, field: :id
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year, :link, :updated_date
-    
+    set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year,
+                        :link, :updated_date
+
     # Secure getters and setters
     def name
       SecureDB.decrypt(name_secure)
@@ -47,26 +48,27 @@ module DramaConnect
     end
 
     # Create drama by passing in hash of attributes
-    def to_json(options = {})
+    def to_json(options = {}) # rubocop:disable Metrics/MethodLength
       JSON(
         {
-          data: {
-            type: 'drama',
-            attributes: {
-              id:,
-              type:,
-              name:,
-              category:,
-              creator_id:,
-              creator_name:,
-              picture_url:,
-              year:,
-              created_date:,
-              updated_date:,
-              link:,
-              rate:,
-              review:
-            }
+          type: 'drama',
+          attributes: {
+            id:,
+            type:,
+            name:,
+            category:,
+            creator_id:,
+            creator_name:,
+            picture_url:,
+            year:,
+            created_date:,
+            updated_date:,
+            link:,
+            rate:,
+            review:
+          },
+          include: {
+            dramalist:
           }
         },
         options
