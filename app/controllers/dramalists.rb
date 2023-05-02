@@ -7,7 +7,7 @@ module DramaConnect
   # Web controller for DramaConnect API
   class Api < Roda
     # rubocop:disable Metrics/BlockLength
-    route('dramalists') do |routing|
+    route('dramaList') do |routing|
       # @proj_route = "#{@api_root}/projects"
       @list_route = "#{@api_root}/dramaList"
 

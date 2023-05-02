@@ -7,7 +7,6 @@ describe 'Test Drama List Handling' do
 
   before do
     wipe_database
-    
   end
 
   it 'HAPPY: should be able to get list of all drama lists' do
