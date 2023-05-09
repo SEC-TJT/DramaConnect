@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 # Web API
 gem 'json'
-gem 'puma', '~>5.6'
+gem 'puma', '~>6.2'
 gem 'roda', '~>3.54'
 
 # Configuration
@@ -21,21 +21,28 @@ gem 'sequel', '~>5.67'
 group :development, :test do
   gem 'sequel-seed'
   gem 'sqlite3', '~>1.6'
+  gem 'rack-test'
 end
 
-# Performance
-gem 'rubocop-performance'
+
+group :production do
+  gem 'pg'
+end
 
 # Testing
 group :test do
   gem 'minitest'
   gem 'minitest-rg'
-  gem 'rack-test'
 end
 
 # Development
-gem 'pry'
-gem 'rerun'
+group :development do
+  gem 'rerun'
+  # Quality
+  gem 'rubocop'
+  gem 'rubocop-performance'
+end
 
-# Quality
-gem 'rubocop'
+#debugging
+gem 'pry'
+
