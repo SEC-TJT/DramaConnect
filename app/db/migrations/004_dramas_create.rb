@@ -6,7 +6,7 @@ Sequel.migration do
   change do
     create_table(:dramas) do
       uuid :id, primary_key: true
-      foreign_key :dramalist_id, table: :dramalists
+      foreign_key :dramalist_id, table: :dramalists, type: :uuid
 
       String :name_secure, null: false
       String :rate_secure, null: false
