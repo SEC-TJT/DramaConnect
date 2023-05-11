@@ -7,7 +7,6 @@ describe 'Test Drama List Handling' do
 
   before do
     wipe_database
-    
   end
 
   it 'HAPPY: should be able to get list of all drama lists' do
@@ -29,8 +28,8 @@ describe 'Test Drama List Handling' do
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data']['attributes']['id']).must_equal id
-    _(result['data']['attributes']['name']).must_equal existing_list['name']
+    _(result['attributes']['id']).must_equal id
+    _(result['attributes']['name']).must_equal existing_list['name']
   end
 
   it 'SAD: should return error if unknown drama_list requested' do
@@ -61,7 +60,7 @@ describe 'Test Drama List Handling' do
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['attributes']
       created_db = DramaConnect::Dramalist.first(id: created['id'])
 
       _(created['id']).must_equal created_db.id

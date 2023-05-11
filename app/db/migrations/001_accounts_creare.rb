@@ -8,6 +8,7 @@ Sequel.migration do
       primary_key :id
 
       String :username, null: false, unique: true
+      String :name, null: false
       String :email, null: false, unique: true
       String :password_digest
       DateTime :created_date
