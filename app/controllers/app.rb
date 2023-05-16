@@ -3,16 +3,16 @@
 # require 'logger'
 require 'roda'
 require 'json'
+require_relative './helpers'
 
 module DramaConnect
   # Web controller for DramaConnect API
   class Api < Roda
     plugin :halt
     plugin :multi_route
+    plugin :request_headers
 
-    def secure_request?(routing)
-      routing.scheme.casecmp(Api.config.SECURE_SCHEME).zero?
-    end
+    include SecureRequestHelpers
 
     route do |routing|
       response['Content-Type'] = 'application/json'

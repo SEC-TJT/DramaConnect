@@ -2,10 +2,9 @@
 
 require 'roda'
 require 'figaro'
-require 'sequel'
-# require './app/lib/secure_db'
-require_app('lib')
 require 'logger'
+require 'sequel'
+require_app('lib')
 
 module DramaConnect
   # Configuration for the API
@@ -37,7 +36,7 @@ module DramaConnect
 
       # Load crypto keys
       SecureDB.setup(ENV.delete('DB_KEY')) # Load crypto key
-      # AuthToken.setup(ENV.fetch('MSG_KEY')) # Load crypto key
+      AuthToken.setup(ENV.fetch('MSG_KEY')) # Load crypto key
     end
 
     configure :development, :test do
