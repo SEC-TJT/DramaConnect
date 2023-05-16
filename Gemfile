@@ -20,7 +20,6 @@ gem 'rbnacl', '~>7.1'
 gem 'hirb', '~>0.7'
 gem 'sequel', '~>5.67'
 group :development, :test do
-  gem 'rack-test'
   gem 'sequel-seed'
   gem 'sqlite3', '~>1.6'
 end
@@ -28,6 +27,9 @@ end
 group :production do
   gem 'pg'
 end
+
+# External Services
+gem 'http'
 
 # Testing
 group :test do
@@ -45,3 +47,4 @@ end
 
 # debugging
 gem 'pry'
+gem 'rack-test'

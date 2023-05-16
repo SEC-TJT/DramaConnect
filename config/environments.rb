@@ -3,7 +3,8 @@
 require 'roda'
 require 'figaro'
 require 'sequel'
-require './app/lib/secure_db'
+# require './app/lib/secure_db'
+require_app('lib')
 require 'logger'
 
 module DramaConnect
@@ -35,8 +36,9 @@ module DramaConnect
       def self.logger = LOGGER
 
       # Load crypto keys
-      SecureDB.setup(ENV.delete('DB_KEY'))
-    end  
+      SecureDB.setup(ENV.delete('DB_KEY')) # Load crypto key
+      # AuthToken.setup(ENV.fetch('MSG_KEY')) # Load crypto key
+    end
 
     configure :development, :test do
       require 'pry'
