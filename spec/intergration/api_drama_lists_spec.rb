@@ -8,16 +8,46 @@ describe 'Test Drama List Handling' do
   before do
     wipe_database
   end
+  describe 'Getting DramaLists' do
+    describe 'Getting lists of DramaLists' do
+      before do
+        @account_data = DATA[:accounts][0]
+        account = DramaConnect::Account.create(@account_data)
+        account.add_owned_dramalist(DATA[:dramalists][0])
+        account.add_owned_dramalist(DATA[:dramalists][1])
+      end
+      it 'HAPPY: should get list for authorized account' do
+        auth = DramaConnect::AuthenticateAccount.call(
+          username: @account_data['username'],
+          password: @account_data['password']
+        )
+        header 'AUTHORIZATION', "Bearer #{auth[:attributes][:auth_token]}"
+        get 'api/v1/dramaList'
+        _(last_response.status).must_equal 200
 
-  it 'HAPPY: should be able to get list of all drama lists' do
-    DramaConnect::Dramalist.create(DATA[:dramalists][0]).save
-    DramaConnect::Dramalist.create(DATA[:dramalists][1]).save
-    get 'api/v1/dramaList'
-    _(last_response.status).must_equal 200
+        result = JSON.parse last_response.body
+        _(result['data'].count).must_equal 2
+      end
+      it 'BAD: should not process for unauthorized account' do
+        header 'AUTHORIZATION', 'Bearer bad_token'
+        get 'api/v1/dramaList'
+        _(last_response.status).must_equal 403
 
-    result = JSON.parse last_response.body
-    _(result['data'].count).must_equal 2
+        result = JSON.parse last_response.body
+        _(result['data']).must_be_nil
+      end
+    end
   end
+
+  # it 'HAPPY: should be able to get list of all drama lists' do
+  #   DramaConnect::Dramalist.create(DATA[:dramalists][0]).save
+  #   DramaConnect::Dramalist.create(DATA[:dramalists][1]).save
+  #   get 'api/v1/dramaList'
+  #   _(last_response.status).must_equal 200
+
+  #   result = JSON.parse last_response.body
+  #   _(result['data'].count).must_equal 2
+  # end
 
   it 'HAPPY: should be able to get details of a single dramaList' do
     existing_list = DATA[:dramalists][1]
@@ -78,7 +108,6 @@ describe 'Test Drama List Handling' do
 end
 
 # old Drama List test
-
 
 # describe 'Test Drama List Handling' do
 #   include Rack::Test::Methods
