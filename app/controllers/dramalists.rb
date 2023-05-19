@@ -61,11 +61,23 @@ module DramaConnect
 
       # GET api/v1/dramaList
       routing.get do
-        output = { data: Dramalist.all }
-        JSON.pretty_generate(output)
+        account = Account.first(username: @auth_account['username'])
+
+        #  add data to test account
+        # DATA = {}
+        # DATA[:dramalists] = YAML.safe_load File.read('app/db/seeds/dramalist_seeds.yml')
+        # DATA[:accounts] = YAML.safe_load File.read('app/db/seeds/account_seeds.yml')
+        # account.add_owned_dramalist(DATA[:dramalists][0])
+        # account.add_owned_dramalist(DATA[:dramalists][1])
+        # finsih add test data
+
+        dramalists = account.dramalists
+        JSON.pretty_generate(data: dramalists)
+        # output = { data: Dramalist.all }
+        # JSON.pretty_generate(output)
       rescue StandardError => e
         Api.logger.error "UNKOWN ERROR: #{e.message}"
-        routing.halt 404, { message: 'Could not find dramaList' }.to_json
+        routing.halt 403, { message: 'Could not find any dramaList' }.to_json
       end
 
       # POST api/v1/dramaList
