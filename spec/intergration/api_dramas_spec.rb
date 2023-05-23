@@ -8,58 +8,76 @@ describe 'Test Drama Handling' do
   before do
     wipe_database
 
-    DATA[:dramalists].each do |dramalist_data|
-      DramaConnect::Dramalist.create(dramalist_data)
-    end
+    @account_data = DATA[:accounts][0]
+    @wrong_account_data = DATA[:accounts][1]
+
+    @account = Credence::Account.create(@account_data)
+    @account.add_owned_project(DATA[:dramalists][0])
+    @account.add_owned_project(DATA[:dramalists][1])
+    Credence::Account.create(@wrong_account_data)
+
+    header 'CONTENT_TYPE', 'application/json'
   end
 
-  it 'HAPPY: should be able to get list of all dramas' do
-    dra_list = DramaConnect::Dramalist.first
-    DATA[:dramas].each do |drama|
-      dra_list.add_drama(drama)
+  describe 'Getting a single drama' do
+    it 'HAPPY: should be able to get details of a single drama' do
+      dra_data = DATA[:dramas][0]
+      list = @account.dramalists.first
+      dra = proj.add_drama(dra_data)
+
+      header 'AUTHORIZATION', auth_header(@account_data)
+      get "/api/v1/dramas/#{dra.id}"
+      _(last_response.status).must_equal 200
+
+      result = JSON.parse(last_response.body)['data']
+      _(result['attributes']['id']).must_equal dra.id
+      _(result['attributes']['name']).must_equal dra_data['name']
     end
 
-    get "api/v1/dramaList/#{dra_list.id}/drama"
-    _(last_response.status).must_equal 200
+    it 'SAD AUTHORIZATION: should not get details without authorization' do
+      dra_data = DATA[:dramas][1]
+      list = DramaConnect::Dramalist.first
+      dra = list.add_drama(dra_data)
 
-    result = JSON.parse(last_response.body)['data']
-    _(result.count).must_equal 6
-    result.each do |doc|
-      _(doc['type']).must_equal 'drama'
+      get "/api/v1/drams/#{dra.id}"
+
+      result = JSON.parse last_response.body
+
+      _(last_response.status).must_equal 403
+      _(result['attributes']).must_be_nil
     end
-  end
 
-  it 'HAPPY: should be able to get details of a single drama' do
-    dra_data = DATA[:dramas][1]
-    dra_list = DramaConnect::Dramalist.first
-    dra = dra_list.add_drama(dra_data)
+    it 'BAD AUTHORIZATION: should not get details with wrong authorization' do
+      dra_data = DATA[:dramas][0]
+      list = @account.dramalists.first
+      dra = list.add_drama(dra_data)
 
-    get "/api/v1/dramaList/#{dra_list.id}/drama/#{dra.id}"
-    _(last_response.status).must_equal 200
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      get "/api/v1/dramas/#{dra.id}"
 
-    result = JSON.parse last_response.body
-    _(result['attributes']['id']).must_equal dra.id
-    _(result['attributes']['name']).must_equal dra_data['name']
-  end
+      result = JSON.parse last_response.body
 
-  it 'SAD: should return error if unknown drama requested' do
-    dra_list = DramaConnect::Dramalist.first # rubocop:disable Lint/UselessAssignment
-    get '/api/v1/drama/foobar'
+      _(last_response.status).must_equal 403
+      _(result['attributes']).must_be_nil
+    end
 
-    _(last_response.status).must_equal 404
+    it 'SAD: should return error if drama does not exist' do
+      header 'AUTHORIZATION', auth_header(@account_data)
+      get '/api/v1/dramas/foobar'
+
+      _(last_response.status).must_equal 404
+    end
   end
 
   describe 'Creating Dramas' do
     before do
       @dra_list = DramaConnect::Dramalist.first
       @dra_data = DATA[:dramas][1]
-      @req_header = { 'CONTENT_TYPE' => 'application/json' }
     end
 
-    it 'HAPPY: should be able to create new dramas' do
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
-      post "api/v1/dramaList/#{@dra_list.id}/drama",
-           @dra_data.to_json, req_header
+    it 'HAPPY: should be able to create when everything correct' do
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "api/v1/dramaList/#{@list.id}/dramas", @doc_data.to_json
       _(last_response.status).must_equal 201
       _(last_response.headers['Location'].size).must_be :>, 0
 
@@ -71,14 +89,37 @@ describe 'Test Drama Handling' do
       _(created['rate']).must_equal @dra_data['rate']
     end
 
-    it 'SECURITY: should not create dramas with mass assignment' do
+    it 'BAD AUTHORIZATION: should not create with incorrect authorization' do
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      post "api/v1/dramaList/#{@list.id}/dramas", @dra_data.to_json
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.headers['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+
+    it 'SAD AUTHORIZATION: should not create without any authorization' do
+      post "api/v1/dramaList/#{@list.id}/dramas", @dra_data.to_json
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.headers['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+
+    it 'BAD VULNERABILITY: should not create with mass assignment' do
       bad_data = @dra_data.clone
       bad_data['created_at'] = '1900-01-01'
-      post "api/v1/dramaList/#{@dra_list.id}/drama",
-           bad_data.to_json, @req_header
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "api/v1/dramaList/#{@list.id}/dramas", bad_data.to_json
 
+      data = JSON.parse(last_response.body)['data']
       _(last_response.status).must_equal 400
       _(last_response.headers['Location']).must_be_nil
+      _(data).must_be_nil
     end
   end
 end

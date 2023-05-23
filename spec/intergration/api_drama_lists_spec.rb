@@ -7,14 +7,19 @@ describe 'Test Drama List Handling' do
 
   before do
     wipe_database
+    @account_data = DATA[:accounts][0]
+    @wrong_account_data = DATA[:accounts][1]
+
+    @account = DramaConnect::Account.create(@account_data)
+    @wrong_account = DramaConnect::Account.create(@wrong_account_data)
+
+    header 'CONTENT_TYPE', 'application/json'
   end
   describe 'Getting DramaLists' do
     describe 'Getting lists of DramaLists' do
       before do
-        @account_data = DATA[:accounts][0]
-        account = DramaConnect::Account.create(@account_data)
-        account.add_owned_dramalist(DATA[:dramalists][0])
-        account.add_owned_dramalist(DATA[:dramalists][1])
+        @account.add_owned_project(DATA[:dramalists][0])
+        @account.add_owned_project(DATA[:dramalists][1])
       end
       it 'HAPPY: should get list for authorized account' do
         auth = DramaConnect::AuthenticateAccount.call(
