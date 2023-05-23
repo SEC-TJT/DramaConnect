@@ -27,7 +27,7 @@ class AccountPolicy
     }
   end
 
-    private
+  private
 
   def self_request?
     @requestor == @account

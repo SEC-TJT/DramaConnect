@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'base64'
-require_relative 'securable.rb'
+require_relative 'securable'
 
 ## Token and Detokenize Authorization Information
 # Usage examples:
