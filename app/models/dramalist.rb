@@ -37,18 +37,29 @@ module DramaConnect
       self.description_secure = SecureDB.encrypt(plaintext)
     end
 
-    def to_json(options = {}) # rubocop:disable Metrics/MethodLength
-      JSON(
-        {
-          type: 'dramalist',
-          attributes: {
-            id:,
-            name:,
-            description:
-          }
-        },
-        options
+    def to_h
+      {
+        type: 'dramalist',
+        attributes: {
+          id:,
+          name:,
+          description:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          owner:,
+          visitors:,
+          dramas:
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end

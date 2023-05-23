@@ -1,100 +1,124 @@
 # frozen_string_literal: true
 
-require 'roda'
 require_relative './app'
 
 module DramaConnect
   # Web controller for DramaConnect API
   class Api < Roda
     route('dramaList') do |routing| # rubocop:disable Metrics/BlockLength
+      unauthorized_message = { message: 'Unauthorized Request' }.to_json
+      routing.halt(403, unauthorized_message) unless @auth_account
+
       @list_route = "#{@api_root}/dramaList"
 
       routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
-        routing.on 'drama' do # rubocop:disable Metrics/BlockLength
-          # GET api/v1/dramaList/[list_id]/drama/[drama_id]
-          routing.get String do |drama_id|
-            drama = Drama.where(dramalist_id: list_id, id: drama_id).first
-            drama ? drama.to_json : raise('Drama not found')
-          rescue StandardError => e
-            Api.logger.error "UNKOWN ERROR: #{e.message}"
-            routing.halt 404, { message: e.message }.to_json
-          end
+        @req_dramalist = Dramalist.first(id: list_id)
+        # GET api/v1/dramaLists/[ID]
+        routing.get do
+          dramalist = GetDramalistQuery.call(
+            account: @auth_account, dramalist: @req_dramalist
+          )
 
-          # GET api/v1/dramaList/[list_id]/drama
-          routing.get do
-            output = { data: Dramalist.first(id: list_id).dramas }
-            JSON.pretty_generate(output)
-          rescue StandardError => e
-            Api.logger.error "UNKOWN ERROR: #{e.message}"
-            routing.halt 404, message: 'Could not find dramas'
-          end
+          { data: dramalist }.to_json
+        rescue GetDramalistQuery::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue GetDramalistQuery::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError => e
+          puts "FIND DRAMALIST ERROR: #{e.inspect}"
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
 
-          # POST api/v1/dramaList/[list_id]/drama
+        routing.on('dramas') do
+          # POST api/v1/dramaList/[list_id]/dramas
           routing.post do
-            new_data = JSON.parse(routing.body.read)
-            dra_list = Dramalist.first(id: list_id)
-            puts new_data
-            puts dra_list
-            new_dra = dra_list.add_drama(new_data)
-            raise 'Could not save drama' unless new_dra
+            # new_data = JSON.parse(routing.body.read)
+            # dra_list = Dramalist.first(id: list_id)
+            # puts new_data
+            # puts dra_list
+            # new_dra = dra_list.add_drama(new_data)
+            # raise 'Could not save drama' unless new_dra
+            new_drama = CreateDrama.call(
+              account: @auth_account,
+              dramalist: @req_dramalist,
+              drama_data: JSON.parse(routing.body.read)
+            )
 
             response.status = 201
-            response['Location'] = "#{@api_route}/drama/#{new_dra.id}"
-            { message: 'Drama saved', data: new_dra }.to_json
-          rescue Sequel::MassAssignmentRestriction
-            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
-            routing.halt 400, { message: 'Illegal Attributes' }.to_json
+            response['Location'] = "#{@dra_route}/#{new_dra.id}"
+            { message: 'Drama saved', data: new_drama }.to_json
+          rescue CreateDrama::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue CreateDrama::IllegalRequestError => e
+            routing.halt 400, { message: e.message }.to_json
           rescue StandardError => e
-            routing.halt 500, { message: e.message }.to_json
+            Api.logger.warn "Could not create drama: #{e.message}"
+            routing.halt 500, { message: 'API server error' }.to_json
           end
         end
 
-        # GET api/v1/dramaList/[ID]
-        routing.get do
-          dra_list = Dramalist.first(id: list_id)
-          dra_list ? dra_list.to_json : raise('Dramalist not found')
-        rescue StandardError => e
-          Api.logger.error "UNKOWN ERROR: #{e.message}"
-          routing.halt 404, { message: e.message }.to_json
+        routing.on('visitors') do # rubocop:disable Metrics/BlockLength
+          # PUT api/v1/dramaList/[list_id]/visitors
+          routing.put do
+            req_data = JSON.parse(routing.body.read)
+
+            visitor = AddVisitor.call(
+              account: @auth_account,
+              dramalist: @req_dramalist,
+              visitor_email: req_data['email']
+            )
+
+            { data: visitor }.to_json
+          rescue AddVisitor::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
+
+          # DELETE api/v1/dramaList/[list_id]/visitors
+          routing.delete do
+            req_data = JSON.parse(routing.body.read)
+            visitor = RemoveVisitor.call(
+              req_username: @auth_account.username,
+              visitor_email: req_data['email'],
+              dramalist_id: list_id
+            )
+
+            { message: "#{visitor.username} removed from dramalist",
+              data: visitor }.to_json
+          rescue RemoveVisitor::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
         end
       end
 
-      # GET api/v1/dramaList
-      routing.get do
-        account = Account.first(username: @auth_account['username'])
+      routing .is do
+        # GET api/v1/dramaList
+        routing.get do
+          dramalists = DramalistPolicy::AccountScope.new(@auth_account).viewable
 
-        #  add data to test account
-        # DATA = {}
-        # DATA[:dramalists] = YAML.safe_load File.read('app/db/seeds/dramalist_seeds.yml')
-        # DATA[:accounts] = YAML.safe_load File.read('app/db/seeds/account_seeds.yml')
-        # account.add_owned_dramalist(DATA[:dramalists][0])
-        # account.add_owned_dramalist(DATA[:dramalists][1])
-        # finsih add test data
+          JSON.pretty_generate(data: dramalists)
+        rescue StandardError
+          routing.halt 403, { message: 'Could not find any dramalists' }.to_json
+        end
 
-        dramalists = account.dramalists
-        JSON.pretty_generate(data: dramalists)
-        # output = { data: Dramalist.all }
-        # JSON.pretty_generate(output)
-      rescue StandardError => e
-        Api.logger.error "UNKOWN ERROR: #{e.message}"
-        routing.halt 403, { message: 'Could not find any dramaList' }.to_json
-      end
+        # POST api/v1/dramaList
+        routing.post do
+          new_data = JSON.parse(routing.body.read)
+          new_list = @auth_account.add_owned_dramalist(new_data)
 
-      # POST api/v1/dramaList
-      routing.post do
-        new_data = JSON.parse(routing.body.read)
-        new_dra_list = Dramalist.new(new_data)
-        raise('Could not save drama_list') unless new_dra_list.save
-
-        response.status = 201
-        response['Location'] = "#{@list_route}/#{new_dra_list.id}"
-        { message: 'Dramalist saved', data: new_dra_list }.to_json
-      rescue Sequel::MassAssignmentRestriction
-        Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
-        routing.halt 400, { message: 'Illegal Attributes' }.to_json
-      rescue StandardError => e
-        Api.logger.error "UNKOWN ERROR: #{e.message}"
-        routing.halt 500, { message: 'Unknown server error' }.to_json
+          response.status = 201
+          response['Location'] = "#{@list_route}/#{new_list.id}"
+          { message: 'Dramalist saved', data: new_list }.to_json
+        rescue Sequel::MassAssignmentRestriction
+          Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+          routing.halt 400, { message: 'Illegal Request' }.to_json
+        rescue StandardError
+          Api.logger.error "Unknown error: #{e.message}"
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
       end
     end
   end
