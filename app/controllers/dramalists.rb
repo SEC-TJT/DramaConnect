@@ -94,7 +94,7 @@ module DramaConnect
         end
       end
 
-      routing .is do
+      routing.is do
         # GET api/v1/dramaList
         routing.get do
           dramalists = DramalistPolicy::AccountScope.new(@auth_account).viewable

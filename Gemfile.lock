@@ -83,6 +83,7 @@ GEM
     sequel-seed (1.1.2)
       sequel (>= 4.49.0)
     sqlite3 (1.6.3-arm64-darwin)
+    sqlite3 (1.6.3-x86_64-darwin)
     sqlite3 (1.6.3-x86_64-linux)
     thor (1.2.2)
     unf (0.1.4)
@@ -92,6 +93,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-22
+  x86_64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
