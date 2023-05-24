@@ -97,11 +97,7 @@ module DramaConnect
       routing.is do
         # GET api/v1/dramaList
         routing.get do
-          # pp = DramalistPolicy::AccountScope.new(@auth_account)
-          # puts pp.all_dramalists
           dramalists = DramalistPolicy::AccountScope.new(@auth_account).viewable
-          # puts dramalists
-          puts dramalists
           JSON.pretty_generate(data: dramalists)
         rescue StandardError
           routing.halt 403, { message: 'Could not find any dramalists' }.to_json
