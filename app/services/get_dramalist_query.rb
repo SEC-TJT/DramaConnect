@@ -21,6 +21,7 @@ module DramaConnect
       raise NotFoundError unless dramalist
 
       policy = DramalistPolicy.new(account, dramalist)
+      puts policy.summary
       raise ForbiddenError unless policy.can_view?
 
       dramalist.full_details.merge(policies: policy.summary)

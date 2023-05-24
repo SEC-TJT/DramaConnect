@@ -13,6 +13,8 @@ module DramaConnect
       end
 
       def viewable
+        # puts @current_account
+        # puts @target_account
         if @current_account == @target_account
           @full_scope
         else
@@ -25,7 +27,10 @@ module DramaConnect
       private
 
       def all_dramalists(account)
-        account.owned_dramalists + account.visitings
+        # puts account
+        puts account.owned_dramalists
+        puts account.dramalists
+        account.owned_dramalists + account.visiting
       end
 
       def includes_visitor?(dramalist, account)
