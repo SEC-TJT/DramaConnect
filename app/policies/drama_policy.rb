@@ -30,10 +30,10 @@ class DramaPolicy
   private
 
   def account_owns_dramalist?
-    @document.dramalist.owner == @account
+    @drama.dramalist.owner == @account
   end
 
   def account_visits_on_dramalist?
-    @document.dramalist.visitors.include?(@account)
+    @drama.dramalist.visitors.include?(@account)
   end
 end
