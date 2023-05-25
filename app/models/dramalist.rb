@@ -6,7 +6,7 @@ require 'sequel'
 module DramaConnect
   # models for DramaList
   class Dramalist < Sequel::Model
-    one_to_many :dramas
+    one_to_many :dramas, class: :'DramaConnect::Drama', key: :dramalist_id
 
     many_to_one :owner, class: :'DramaConnect::Account'
     many_to_many :visitors,

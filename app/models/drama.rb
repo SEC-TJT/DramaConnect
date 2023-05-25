@@ -6,7 +6,7 @@ require 'sequel'
 module DramaConnect
   # Models for a drama
   class Drama < Sequel::Model
-    many_to_one :dramalist
+    many_to_one :dramalist, class: :'DramaConnect::Dramalist'
 
     plugin :uuid, field: :id
     plugin :timestamps

@@ -8,7 +8,7 @@ class DramaPolicy
   end
 
   def can_view?
-    account_owns_dramalist? || account_visits_on_dramalist?
+    account_visits_on_dramalist? || account_owns_dramalist?
   end
 
   def can_edit?
@@ -30,6 +30,7 @@ class DramaPolicy
   private
 
   def account_owns_dramalist?
+    puts @drama.dramalist.owner
     @drama.dramalist.owner == @account
   end
 
