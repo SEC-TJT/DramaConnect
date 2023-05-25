@@ -23,22 +23,6 @@ describe 'Test Drama Handling' do
       dra_data = DATA[:dramas][0]
       list = @account.dramalists.first
       dra = list.add_drama(dra_data)
-      # req_drama = DramaConnect::Drama.first(id: dra.id)
-      req_drama = DramaConnect::Drama.find(id: dra.id)
-      req_dramalist = DramaConnect::Dramalist.first(id: list.id)
-      puts DramaConnect::Drama.all[0].to_json
-      puts dra.dramalist_id
-      puts req_drama.dramalist_id
-      puts dra.dramalist_id.class
-      puts list.id.class
-
-      # puts @req_dramalist.to_json
-      # puts @req_dramalist.dramas.to_json
-      # puts @req_dramalist.owner.to_json
-      # puts @req_drama.to_json
-      # puts @req_drama.dramalist == list
-      # puts @req_drama.dramalist.owner == @account
-      # puts dra.dramalist.owner
       header 'AUTHORIZATION', auth_header(@account_data)
       get "/api/v1/dramas/#{dra.id}"
       _(last_response.status).must_equal 200
@@ -52,8 +36,8 @@ describe 'Test Drama Handling' do
       dra_data = DATA[:dramas][1]
       list = DramaConnect::Dramalist.first
       dra = list.add_drama(dra_data)
-      get "/api/v1/drams/#{dra.id}"
-      result = JSON.parse last_response.body
+      get "/api/v1/dramas/#{dra.id}"
+      result = JSON.parse(last_response.body)
 
       _(last_response.status).must_equal 403
       _(result['attributes']).must_be_nil
@@ -66,9 +50,7 @@ describe 'Test Drama Handling' do
 
       header 'AUTHORIZATION', auth_header(@wrong_account_data)
       get "/api/v1/dramas/#{dra.id}"
-      puts 'hi'
-      puts last_response.body
-      result = JSON.parse last_response.body
+      result = JSON.parse(last_response.body)
 
       _(last_response.status).must_equal 403
       _(result['attributes']).must_be_nil

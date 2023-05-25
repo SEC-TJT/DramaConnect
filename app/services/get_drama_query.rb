@@ -6,7 +6,7 @@ module DramaConnect
     # Error for owner cannot be visitor
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to access that drama'
+        'You are not allowed to access that drama'.to_s
       end
     end
 
