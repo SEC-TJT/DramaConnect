@@ -11,7 +11,7 @@ module DramaConnect
     plugin :uuid, field: :id
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year,
+    set_allowed_columns :name, :rate, :review, :type, :category, :picture_url, :year,
                         :link, :updated_date
 
     # Secure getters and setters
@@ -57,8 +57,6 @@ module DramaConnect
             type:,
             name:,
             category:,
-            creator_id:,
-            creator_name:,
             picture_url:,
             year:,
             created_date:,

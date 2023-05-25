@@ -11,10 +11,8 @@ Sequel.migration do
       String :name_secure, null: false
       String :rate_secure, null: false
       String :review_secure, null: false
-      String :type, null: false
-      String :category, null: false
-      String :creator_id, null: false
-      String :creator_name, null: false
+      String :type
+      String :category
       String :picture_url_secure
       String :year
       String :link
@@ -22,7 +20,7 @@ Sequel.migration do
       DateTime :created_date
       DateTime :updated_date
 
-      unique %i[dramalist_id creator_id name_secure]
+      unique %i[dramalist_id name_secure]
     end
   end
 end
