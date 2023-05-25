@@ -11,10 +11,10 @@ describe 'Test Drama Handling' do
     @account_data = DATA[:accounts][0]
     @wrong_account_data = DATA[:accounts][1]
 
-    @account = Credence::Account.create(@account_data)
-    @account.add_owned_project(DATA[:dramalists][0])
-    @account.add_owned_project(DATA[:dramalists][1])
-    Credence::Account.create(@wrong_account_data)
+    @account = DramaConnect::Account.create(@account_data)
+    @account.add_owned_dramalist(DATA[:dramalists][0])
+    @account.add_owned_dramalist(DATA[:dramalists][1])
+    DramaConnect::Account.create(@wrong_account_data)
 
     header 'CONTENT_TYPE', 'application/json'
   end
@@ -23,7 +23,7 @@ describe 'Test Drama Handling' do
     it 'HAPPY: should be able to get details of a single drama' do
       dra_data = DATA[:dramas][0]
       list = @account.dramalists.first
-      dra = proj.add_drama(dra_data)
+      dra = list.add_drama(dra_data)
 
       header 'AUTHORIZATION', auth_header(@account_data)
       get "/api/v1/dramas/#{dra.id}"
@@ -38,9 +38,7 @@ describe 'Test Drama Handling' do
       dra_data = DATA[:dramas][1]
       list = DramaConnect::Dramalist.first
       dra = list.add_drama(dra_data)
-
       get "/api/v1/drams/#{dra.id}"
-
       result = JSON.parse last_response.body
 
       _(last_response.status).must_equal 403
@@ -71,13 +69,13 @@ describe 'Test Drama Handling' do
 
   describe 'Creating Dramas' do
     before do
-      @dra_list = DramaConnect::Dramalist.first
+      @list = DramaConnect::Dramalist.first
       @dra_data = DATA[:dramas][1]
     end
 
     it 'HAPPY: should be able to create when everything correct' do
       header 'AUTHORIZATION', auth_header(@account_data)
-      post "api/v1/dramaList/#{@list.id}/dramas", @doc_data.to_json
+      post "api/v1/dramaList/#{@list.id}/dramas", @dra_data.to_json
       _(last_response.status).must_equal 201
       _(last_response.headers['Location'].size).must_be :>, 0
 

@@ -2,7 +2,7 @@
 
 require_relative '../spec_helper'
 
-describe 'Test AddVisitorToDramalist service' do
+describe 'Test AddVisitor service' do
   before do
     wipe_database
 
@@ -20,9 +20,10 @@ describe 'Test AddVisitorToDramalist service' do
   end
 
   it 'HAPPY: should be able to add a visitor to a dramalist' do
-    DramaConnect::AddVisitorToDramalist.call(
-      email: @visitor.email,
-      dramalist_id: @dramalist.id
+    DramaConnect::AddVisitor.call(
+      account: @owner,
+      dramalist: @dramalist,
+      visitor_email: @visitor.email
     )
 
     _(@visitor.dramalists.count).must_equal 1
@@ -31,10 +32,11 @@ describe 'Test AddVisitorToDramalist service' do
 
   it 'BAD: should not add owner as a visitor' do
     _(proc {
-      DramaConnect::AddVisitorToDramalist.call(
-        email: @owner.email,
-        dramalist_id: @dramalist.id
-      )
-    }).must_raise DramaConnect::AddVisitorToDramalist::OwnerNotVisitorError
+        DramaConnect::AddVisitor.call(
+          account: @owner,
+          dramalist: @dramalist,
+          visitor_email: @owner.email
+        )
+      }).must_raise DramaConnect::AddVisitor::ForbiddenError
   end
 end

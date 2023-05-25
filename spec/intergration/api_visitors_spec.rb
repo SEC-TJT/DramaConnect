@@ -26,7 +26,7 @@ describe 'Test Visitor Handling' do
       req_data = { email: @another_account.email }
 
       header 'AUTHORIZATION', auth_header(@account_data)
-      put "api/v1/dramaList/#{@proj.id}/visitors", req_data.to_json
+      put "api/v1/dramaList/#{@list.id}/visitors", req_data.to_json
 
       added = JSON.parse(last_response.body)['data']['attributes']
 
@@ -48,7 +48,7 @@ describe 'Test Visitor Handling' do
       req_data = { email: @account.email }
 
       header 'AUTHORIZATION', auth_header(@account_data)
-      put "api/v1/dramaList/#{@proj.id}/visitors", req_data.to_json
+      put "api/v1/dramaList/#{@list.id}/visitors", req_data.to_json
       added = JSON.parse(last_response.body)['data']
 
       _(last_response.status).must_equal 403
@@ -58,20 +58,20 @@ describe 'Test Visitor Handling' do
 
   describe 'Removing visitors from a dramalist' do
     it 'HAPPY: should remove with proper authorization' do
-      @proj.add_visitor(@another_account)
+      @list.add_visitor(@another_account)
       req_data = { email: @another_account.email }
 
       header 'AUTHORIZATION', auth_header(@account_data)
-      delete "api/v1/dramaList/#{@proj.id}/visitors", req_data.to_json
+      delete "api/v1/dramaList/#{@list.id}/visitors", req_data.to_json
 
       _(last_response.status).must_equal 200
     end
 
     it 'SAD AUTHORIZATION: should not remove without authorization' do
-      @proj.add_visitor(@another_account)
+      @list.add_visitor(@another_account)
       req_data = { email: @another_account.email }
 
-      delete "api/v1/dramaList/#{@proj.id}/visitors", req_data.to_json
+      delete "api/v1/dramaList/#{@list.id}/visitors", req_data.to_json
 
       _(last_response.status).must_equal 403
     end
@@ -80,7 +80,7 @@ describe 'Test Visitor Handling' do
       req_data = { email: @another_account.email }
 
       header 'AUTHORIZATION', auth_header(@account_data)
-      delete "api/v1/dramaList/#{@proj.id}/visitors", req_data.to_json
+      delete "api/v1/dramaList/#{@list.id}/visitors", req_data.to_json
 
       _(last_response.status).must_equal 403
     end

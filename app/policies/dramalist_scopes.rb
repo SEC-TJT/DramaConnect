@@ -25,7 +25,7 @@ module DramaConnect
       private
 
       def all_dramalists(account)
-        account.owned_dramalists + account.visiting
+        account.owned_dramalists + account.visitings
       end
 
       def includes_visitor?(dramalist, account)

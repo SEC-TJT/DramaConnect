@@ -45,7 +45,7 @@ module DramaConnect
             )
 
             response.status = 201
-            response['Location'] = "#{@dra_route}/#{new_dra.id}"
+            response['Location'] = "#{@dra_route}/#{new_drama.id}"
             { message: 'Drama saved', data: new_drama }.to_json
           rescue CreateDrama::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
