@@ -8,14 +8,14 @@ module DramaConnect
   # Models a registered account
   class Account < Sequel::Model
     one_to_many :owned_dramalists, class: :'DramaConnect::Dramalist', key: :owner_id
-    many_to_many :visiting,
+    many_to_many :visitings,
                  class: :'DramaConnect::Dramalist',
                  join_table: :accounts_dramalists,
                  left_key: :visitor_id, right_key: :dramalist_id
 
     plugin :association_dependencies,
            owned_dramalists: :destroy,
-           visiting: :nullify
+           visitings: :nullify
 
     plugin :whitelist_security
     set_allowed_columns :username, :email, :password, :name
@@ -23,7 +23,7 @@ module DramaConnect
     plugin :timestamps, update_on_create: true
 
     def dramalists
-      owned_dramalists + visiting
+      owned_dramalists + visitings
     end
 
     def password=(new_password)

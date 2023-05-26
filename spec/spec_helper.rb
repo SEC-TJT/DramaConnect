@@ -16,6 +16,15 @@ def wipe_database
   DramaConnect::Account.map(&:destroy)
 end
 
+def auth_header(account_data)
+  auth = DramaConnect::AuthenticateAccount.call(
+    username: account_data['username'],
+    password: account_data['password']
+  )
+
+  "Bearer #{auth[:attributes][:auth_token]}"
+end
+
 DATA = {} # rubocop:disable Style/MutableConstant
 DATA[:dramas] = YAML.safe_load File.read('app/db/seeds/drama_seeds.yml')
 DATA[:dramalists] = YAML.safe_load File.read('app/db/seeds/dramalist_seeds.yml')

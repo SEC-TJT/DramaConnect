@@ -31,7 +31,7 @@ module DramaConnect
         routing.post do
           credentials = JSON.parse(request.body.read, symbolize_names: true)
           auth_account = AuthenticateAccount.call(credentials)
-          auth_account.to_json
+          { data: auth_account }.to_json
         # rescue UnauthorizedError
         rescue AuthenticateAccount::UnauthorizedError
           # puts [e.class, e.message].join ': '

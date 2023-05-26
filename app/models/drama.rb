@@ -6,12 +6,12 @@ require 'sequel'
 module DramaConnect
   # Models for a drama
   class Drama < Sequel::Model
-    many_to_one :dramalist
+    many_to_one :dramalist, class: :'DramaConnect::Dramalist'
 
     plugin :uuid, field: :id
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :name, :rate, :review, :type, :category, :creator_id, :creator_name, :picture_url, :year,
+    set_allowed_columns :name, :rate, :review, :type, :category, :picture_url, :year,
                         :link, :updated_date
 
     # Secure getters and setters
@@ -57,8 +57,6 @@ module DramaConnect
             type:,
             name:,
             category:,
-            creator_id:,
-            creator_name:,
             picture_url:,
             year:,
             created_date:,

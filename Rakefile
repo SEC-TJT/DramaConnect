@@ -61,12 +61,16 @@ task console: :print_env do
   sh 'pry -r ./spec/test_load_all'
 end
 
-namespace :db do
+namespace :db do # rubocop:disable Metrics/BlockLength
   task :load do
     require_app(nil) # loads config code files only
     require 'sequel'
     Sequel.extension :migration
     @app = DramaConnect::Api
+  end
+
+  task load_models: :load do
+    require_app(%w[lib models services])
   end
 
   desc 'Run migrations'
@@ -93,6 +97,23 @@ namespace :db do
     FileUtils.rm(db_filename)
     puts "Deleted #{db_filename}"
   end
+
+  task reset_seeds: :load_models do
+    @app.DB[:schema_seeds].delete if @app.DB.tables.include?(:schema_seeds)
+    Credence::Account.dataset.destroy
+  end
+
+  desc 'Seeds the development database'
+  task seed: :load_models do
+    require_app(%w[lib models policies services])
+    require 'sequel/extensions/seed'
+    Sequel::Seed.setup(:development)
+    Sequel.extension :seed
+    Sequel::Seeder.apply(@app.DB, 'app/db/seeds')
+  end
+
+  desc 'Delete all data and reseed'
+  task reseed: %i[reset_seeds seed]
 end
 
 namespace :newkey do
