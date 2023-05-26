@@ -11,11 +11,11 @@ Sequel.migration do
       String :name_secure, null: false
       String :rate_secure, null: false
       String :review_secure, null: false
-      String :type
-      String :category
+      String :type, null: false
+      String :category, null: false
       String :picture_url_secure
-      String :year
-      String :link
+      String :year, null: false
+      String :link, null: false
 
       DateTime :created_date
       DateTime :updated_date
