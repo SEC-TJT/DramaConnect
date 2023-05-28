@@ -12,16 +12,22 @@ describe 'Test AddVisitor service' do
 
     dramalist_data = DATA[:dramalists].first
 
+    # @owner = DramaConnect::Account.all[0]
+    # @visitor = DramaConnect::Account.all[1]
+    # @dramalist = DramaConnect::CreateDramalistForOwner.call(
+    #   owner_id: @owner.id, dramalist_data:
+    # )
+    @owner_data = DATA[:accounts][0]
     @owner = DramaConnect::Account.all[0]
     @visitor = DramaConnect::Account.all[1]
-    @dramalist = DramaConnect::CreateDramalistForOwner.call(
-      owner_id: @owner.id, dramalist_data:
-    )
+    @dramalist = @owner.add_owned_dramalist(dramalist_data)
   end
 
   it 'HAPPY: should be able to add a visitor to a dramalist' do
+    auth = authorization(@owner_data)
+
     DramaConnect::AddVisitor.call(
-      account: @owner,
+      auth: auth,
       dramalist: @dramalist,
       visitor_email: @visitor.email
     )
