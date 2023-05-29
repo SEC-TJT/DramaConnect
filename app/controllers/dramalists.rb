@@ -11,6 +11,22 @@ module DramaConnect
 
       @list_route = "#{@api_root}/dramaList"
 
+      routing.get String, 'dramas', String do |list_id, drama_id|
+        @req_dramalist = Dramalist.first(id: list_id)
+        @req_drama = Drama.first(id: drama_id)
+        drama = GetDramaQuery.call(
+          requestor: @auth_account, drama: @req_drama
+        )
+        { data: drama }.to_json
+      rescue GetDramaQuery::ForbiddenError => e
+        routing.halt 403, { message: e.message }.to_json
+      rescue GetDramaQuery::NotFoundError => e
+        routing.halt 404, { message: e.message }.to_json
+      rescue StandardError => e
+        puts "FIND DRAMALIST ERROR: #{e.inspect}"
+        routing.halt 500, { message: 'API server error' }.to_json
+      end
+
       routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
         @req_dramalist = Dramalist.first(id: list_id)
         # GET api/v1/dramaLists/[ID]
@@ -39,10 +55,7 @@ module DramaConnect
             # new_dra = dra_list.add_drama(new_data)
             # raise 'Could not save drama' unless new_dra
             data_drama = JSON.parse(routing.body.read)
-            puts 'hi1'
-            puts data_drama
             # data_drama = JSON.parse(routing.body.read)
-            puts 'hi3'
             data_drama['created_date'] = DateTime.now
             data_drama['updated_date'] = DateTime.now
             new_drama = CreateDrama.call(
@@ -50,7 +63,6 @@ module DramaConnect
               dramalist: @req_dramalist,
               drama_data: data_drama
             )
-            puts 'hi'
             response.status = 201
 
             response['Location'] = "#{@dra_route}/#{new_drama.id}"
