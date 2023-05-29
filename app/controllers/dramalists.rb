@@ -45,6 +45,21 @@ module DramaConnect
           routing.halt 500, { message: 'API server error' }.to_json
         end
 
+        routing.delete do
+          puts list_id
+          list = RemoveDramalist.call(
+            requestor: @auth_account,
+            dramalist_id: list_id
+          )
+
+          { message: "#{list.name} removed from dramalist",
+            data: list }.to_json
+        rescue RemoveDramalist::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
+
         routing.on('dramas') do
           # POST api/v1/dramaList/[list_id]/dramas
           routing.post do
