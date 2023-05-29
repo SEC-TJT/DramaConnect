@@ -38,10 +38,14 @@ module DramaConnect
             # puts dra_list
             # new_dra = dra_list.add_drama(new_data)
             # raise 'Could not save drama' unless new_dra
+            puts JSON.parse(routing.body.read)
+            data_drama = SON.parse(routing.body.read)
+            data_drama['created_date'] = DateTime.now
+            data_drama['updated_date'] = DateTime.now
             new_drama = CreateDrama.call(
               account: @auth_account,
               dramalist: @req_dramalist,
-              drama_data: JSON.parse(routing.body.read)
+              drama_data: data_drama
             )
 
             response.status = 201
@@ -106,6 +110,10 @@ module DramaConnect
         # POST api/v1/dramaList
         routing.post do
           new_data = JSON.parse(routing.body.read)
+          new_data['created_date'] = DateTime.now
+          new_data['updated_date'] = DateTime.now
+          puts new_data
+
           new_list = @auth_account.add_owned_dramalist(new_data)
 
           response.status = 201

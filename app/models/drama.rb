@@ -12,7 +12,7 @@ module DramaConnect
     plugin :timestamps
     plugin :whitelist_security
     set_allowed_columns :name, :rate, :review, :type, :category, :picture_url, :year,
-                        :link, :updated_date
+                        :link, :created_date, :updated_date
 
     # Secure getters and setters
     def name

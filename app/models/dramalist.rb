@@ -18,7 +18,7 @@ module DramaConnect
     plugin :association_dependencies, dramas: :destroy, visitors: :nullify
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :name, :description, :updated_date
+    set_allowed_columns :name, :description, :created_date, :updated_date
 
     # Secure getters and setters
     def name
