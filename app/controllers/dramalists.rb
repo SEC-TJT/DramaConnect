@@ -38,8 +38,11 @@ module DramaConnect
             # puts dra_list
             # new_dra = dra_list.add_drama(new_data)
             # raise 'Could not save drama' unless new_dra
-            puts JSON.parse(routing.body.read)
-            data_drama = SON.parse(routing.body.read)
+            data_drama = JSON.parse(routing.body.read)
+            puts 'hi1'
+            puts data_drama
+            # data_drama = JSON.parse(routing.body.read)
+            puts 'hi3'
             data_drama['created_date'] = DateTime.now
             data_drama['updated_date'] = DateTime.now
             new_drama = CreateDrama.call(
@@ -47,8 +50,9 @@ module DramaConnect
               dramalist: @req_dramalist,
               drama_data: data_drama
             )
-
+            puts 'hi'
             response.status = 201
+
             response['Location'] = "#{@dra_route}/#{new_drama.id}"
             { message: 'Drama saved', data: new_drama }.to_json
           rescue CreateDrama::ForbiddenError => e
