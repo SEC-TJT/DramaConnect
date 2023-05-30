@@ -8,6 +8,8 @@ module DramaConnect
       def initialize(current_account, target_account = nil)
         target_account ||= current_account
         @full_scope = all_dramalists(target_account)
+        @own_scope = owned_dramalists(current_account)
+        @share_scope = shared_dramalists(current_account)
         @current_account = current_account
         @target_account = target_account
       end
@@ -22,10 +24,36 @@ module DramaConnect
         end
       end
 
+      def ownable
+        @own_scope
+      end
+
+      def shareable
+        @share_scope
+      end
+
       private
 
+      def owned_dramalists(account)
+        account.owned_dramalists.map do |dramalist|
+          policy = DramalistPolicy.new(account, dramalist)
+          dramalist.to_h.merge(policies: policy.summary)
+        end
+      end
+
+      def shared_dramalists(account)
+        account.visitings.map do |dramalist|
+          policy = DramalistPolicy.new(account, dramalist)
+          dramalist.to_h.merge(policies: policy.summary)
+        end
+      end
+
       def all_dramalists(account)
-        account.owned_dramalists + account.visitings
+        puts account.owned_dramalists + account.visitings
+        (account.owned_dramalists + account.visitings).map do |dramalist|
+          policy = DramalistPolicy.new(account, dramalist)
+          dramalist.to_h.merge(policies: policy.summary)
+        end
       end
 
       def includes_visitor?(dramalist, account)

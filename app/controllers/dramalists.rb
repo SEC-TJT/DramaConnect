@@ -61,6 +61,26 @@ module DramaConnect
         Api.logger.warn "Could not create drama: #{e.message}"
         routing.halt 500, { message: 'API server error' }.to_json
       end
+      # GET api/v1/dramaList/owned
+      routing.on('owned') do
+        routing.get do
+          dramalists = DramalistPolicy::AccountScope.new(@auth_account).ownable
+          JSON.pretty_generate(data: dramalists)
+        rescue StandardError
+          routing.halt 403, { message: 'Could not find any dramalists' }.to_json
+        end
+      end
+
+      # GET api/v1/dramaList/shared
+      routing.get('shared') do
+        puts 'sharing'
+        dramalists = DramalistPolicy::AccountScope.new(@auth_account).shareable
+        puts dramalists
+        JSON.pretty_generate(data: dramalists)
+
+        # rescue StandardError
+        #   routing.halt 403, { message: 'Could not find any dramalists' }.to_json
+      end
 
       routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
         @req_dramalist = Dramalist.first(id: list_id)
