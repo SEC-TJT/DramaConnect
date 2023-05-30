@@ -41,6 +41,27 @@ module DramaConnect
         #   routing.halt 500, { message: 'API server error' }.to_json
       end
 
+      routing.post String, 'dramas', String, 'update' do |_list_id, drama_id|
+        data_drama = JSON.parse(routing.body.read)
+        data_drama['updated_date'] = DateTime.now
+        puts data_drama
+        new_drama = UpdateDrama.call(
+          account: @auth_account,
+          drama_id:,
+          drama_data: data_drama
+        )
+        response.status = 201
+        response['Location'] = "#{@dra_route}/#{new_drama.id}"
+        { message: 'Drama saved', data: new_drama }.to_json
+        # rescue UpdateDrama::ForbiddenError => e
+        #   routing.halt 403, { message: e.message }.to_json
+        # rescue UpdateDrama::IllegalRequestError => e
+        #   routing.halt 400, { message: e.message }.to_json
+        # rescue StandardError => e
+        #   Api.logger.warn "Could not create drama: #{e.message}"
+        #   routing.halt 500, { message: 'API server error' }.to_json
+      end
+
       routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
         @req_dramalist = Dramalist.first(id: list_id)
         # GET api/v1/dramaLists/[ID]
