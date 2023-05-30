@@ -53,13 +53,13 @@ module DramaConnect
         response.status = 201
         response['Location'] = "#{@dra_route}/#{new_drama.id}"
         { message: 'Drama saved', data: new_drama }.to_json
-        # rescue UpdateDrama::ForbiddenError => e
-        #   routing.halt 403, { message: e.message }.to_json
-        # rescue UpdateDrama::IllegalRequestError => e
-        #   routing.halt 400, { message: e.message }.to_json
-        # rescue StandardError => e
-        #   Api.logger.warn "Could not create drama: #{e.message}"
-        #   routing.halt 500, { message: 'API server error' }.to_json
+      rescue UpdateDrama::ForbiddenError => e
+        routing.halt 403, { message: e.message }.to_json
+      rescue UpdateDrama::IllegalRequestError => e
+        routing.halt 400, { message: e.message }.to_json
+      rescue StandardError => e
+        Api.logger.warn "Could not create drama: #{e.message}"
+        routing.halt 500, { message: 'API server error' }.to_json
       end
 
       routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
@@ -78,6 +78,27 @@ module DramaConnect
         rescue StandardError => e
           puts "FIND DRAMALIST ERROR: #{e.inspect}"
           routing.halt 500, { message: 'API server error' }.to_json
+        end
+
+        # PUT api/v1/dramaLists/[ID]/update
+        routing.post('update') do
+          data_dramalist = JSON.parse(routing.body.read)
+          data_dramalist['updated_date'] = DateTime.now
+          puts data_dramalist
+          drama_list = UpdateDramalist.call(
+            account: @auth_account,
+            list_id:,
+            dramalist_data: data_dramalist
+          )
+          response.status = 201
+          response['Location'] = "#{@dra_route}/#{drama_list.id}"
+          { message: 'Dramalist updated', data: data_dramalist }.to_json
+        rescue UpdateDrama::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue UpdateDrama::IllegalRequestError => e
+          routing.halt 400, { message: e.message }.to_json
+        rescue StandardError => e
+          Api.logger.warn "Could not create drama: #{e.message}"
         end
         # Delete api/v1/dramaLists/[ID]
         routing.delete do
