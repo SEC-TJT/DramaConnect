@@ -11,6 +11,7 @@ module DramaConnect
 
       @list_route = "#{@api_root}/dramaList"
 
+      # GET api/v1/dramaList/[list_id]/dramas/[drama_id]
       routing.get String, 'dramas', String do |list_id, drama_id|
         @req_dramalist = Dramalist.first(id: list_id)
         @req_drama = Drama.first(id: drama_id)
@@ -25,6 +26,19 @@ module DramaConnect
       rescue StandardError => e
         puts "FIND DRAMALIST ERROR: #{e.inspect}"
         routing.halt 500, { message: 'API server error' }.to_json
+      end
+      # Delete api/v1/dramaList/[list_id]/dramas/[drama_id]
+      routing.delete String, 'dramas', String do |_list_id, drama_id|
+        drama = RemoveDrama.call(
+          requestor: @auth_account,
+          drama_id:
+        )
+        { message: "#{drama.name} removed from dramalist",
+          data: drama }.to_json
+        # rescue RemoveDrama::ForbiddenError => e
+        #   routing.halt 403, { message: e.message }.to_json
+        # rescue StandardError
+        #   routing.halt 500, { message: 'API server error' }.to_json
       end
 
       routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
@@ -44,7 +58,7 @@ module DramaConnect
           puts "FIND DRAMALIST ERROR: #{e.inspect}"
           routing.halt 500, { message: 'API server error' }.to_json
         end
-
+        # Delete api/v1/dramaLists/[ID]
         routing.delete do
           puts list_id
           list = RemoveDramalist.call(
