@@ -24,10 +24,7 @@ def authenticate(account_data)
 end
 
 def auth_header(account_data)
-  auth = DramaConnect::AuthenticateAccount.call(
-    username: account_data['username'],
-    password: account_data['password']
-  )
+  auth = authenticate(account_data)
 
   "Bearer #{auth[:attributes][:auth_token]}"
 end

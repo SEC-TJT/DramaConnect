@@ -18,10 +18,10 @@ module DramaConnect
     end
 
     # Drama for given requestor account
-    def self.call(requestor:, drama:)
+    def self.call(auth:, drama:)
       raise NotFoundError unless drama
 
-      policy = DramaPolicy.new(requestor, drama)
+      policy = DramaPolicy.new(auth[:account], drama, auth[:scope])
       raise ForbiddenError unless policy.can_view?
 
       drama

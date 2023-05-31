@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-# Policy to determine if account can view a project
+# Policy to determine if account can view a dramalist
 class AccountPolicy
   def initialize(requestor, account)
     @requestor = requestor
-    @account = account
+    @this_account = account
   end
 
   def can_view?
-    self_request?
+    true
   end
 
   def can_edit?
@@ -30,6 +30,6 @@ class AccountPolicy
   private
 
   def self_request?
-    @requestor == @account
+    @requestor == @this_account
   end
 end

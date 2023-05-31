@@ -16,7 +16,7 @@ module  DramaConnect
 
         routing.get do
           drama = GetDramaQuery.call(
-            requestor: @auth_account, drama: @req_drama
+            auth: @auth, drama: @req_drama
           )
 
           { data: drama }.to_json
@@ -25,7 +25,7 @@ module  DramaConnect
         rescue GetDramaQuery::NotFoundError => e
           routing.halt 404, { message: e.message }.to_json
         rescue StandardError => e
-          puts "GET DRAMA ERROR: #{e.inspect}"
+          Api.logger.warn "Drama Error: #{e.inspect}"
           routing.halt 500, { message: 'API server error' }.to_json
         end
       end

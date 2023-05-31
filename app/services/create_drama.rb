@@ -17,8 +17,8 @@ module DramaConnect
       end
     end
 
-    def self.call(account:, dramalist:, drama_data:)
-      policy = DramalistPolicy.new(account, dramalist)
+    def self.call(auth:, dramalist:, drama_data:)
+      policy = DramalistPolicy.new(auth[:account], dramalist, auth[:scope])
       raise ForbiddenError unless policy.can_add_dramas?
 
       add_drama(dramalist, drama_data)

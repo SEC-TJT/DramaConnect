@@ -6,8 +6,7 @@ module DramaConnect
   # Web controller for DramaConnect API
   class Api < Roda
     route('dramaList') do |routing| # rubocop:disable Metrics/BlockLength
-      unauthorized_message = { message: 'Unauthorized Request' }.to_json
-      routing.halt(403, unauthorized_message) unless @auth_account
+      routing.halt(403, UNAUTH_MSG) unless @auth_account
 
       @list_route = "#{@api_root}/dramaList"
 
@@ -16,7 +15,7 @@ module DramaConnect
         @req_dramalist = Dramalist.first(id: list_id)
         @req_drama = Drama.first(id: drama_id)
         drama = GetDramaQuery.call(
-          requestor: @auth_account, drama: @req_drama
+          auth: @auth, drama: @req_drama
         )
         { data: drama }.to_json
       rescue GetDramaQuery::ForbiddenError => e
@@ -30,15 +29,15 @@ module DramaConnect
       # Delete api/v1/dramaList/[list_id]/dramas/[drama_id]
       routing.delete String, 'dramas', String do |_list_id, drama_id|
         drama = RemoveDrama.call(
-          requestor: @auth_account,
+          auth: @auth,
           drama_id:
         )
         { message: "#{drama.name} removed from dramalist",
           data: drama }.to_json
-        # rescue RemoveDrama::ForbiddenError => e
-        #   routing.halt 403, { message: e.message }.to_json
-        # rescue StandardError
-        #   routing.halt 500, { message: 'API server error' }.to_json
+        rescue RemoveDrama::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
       end
 
       routing.post String, 'dramas', String, 'update' do |_list_id, drama_id|
@@ -46,7 +45,7 @@ module DramaConnect
         data_drama['updated_date'] = DateTime.now
         puts data_drama
         new_drama = UpdateDrama.call(
-          account: @auth_account,
+          auth: @auth,
           drama_id:,
           drama_data: data_drama
         )
@@ -77,9 +76,8 @@ module DramaConnect
         dramalists = DramalistPolicy::AccountScope.new(@auth_account).shareable
         puts dramalists
         JSON.pretty_generate(data: dramalists)
-
-        # rescue StandardError
-        #   routing.halt 403, { message: 'Could not find any dramalists' }.to_json
+        rescue StandardError
+          routing.halt 403, { message: 'Could not find any dramalists' }.to_json
       end
 
       routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
@@ -87,7 +85,7 @@ module DramaConnect
         # GET api/v1/dramaLists/[ID]
         routing.get do
           dramalist = GetDramalistQuery.call(
-            account: @auth_account, dramalist: @req_dramalist
+            auth: @auth, dramalist: @req_dramalist
           )
 
           { data: dramalist }.to_json
@@ -106,7 +104,7 @@ module DramaConnect
           data_dramalist['updated_date'] = DateTime.now
           puts data_dramalist
           drama_list = UpdateDramalist.call(
-            account: @auth_account,
+            auth: @auth,
             list_id:,
             dramalist_data: data_dramalist
           )
@@ -124,7 +122,7 @@ module DramaConnect
         routing.delete do
           puts list_id
           list = RemoveDramalist.call(
-            requestor: @auth_account,
+            auth: @auth,
             dramalist_id: list_id
           )
 
@@ -139,18 +137,11 @@ module DramaConnect
         routing.on('dramas') do
           # POST api/v1/dramaList/[list_id]/dramas
           routing.post do
-            # new_data = JSON.parse(routing.body.read)
-            # dra_list = Dramalist.first(id: list_id)
-            # puts new_data
-            # puts dra_list
-            # new_dra = dra_list.add_drama(new_data)
-            # raise 'Could not save drama' unless new_dra
             data_drama = JSON.parse(routing.body.read)
-            # data_drama = JSON.parse(routing.body.read)
             data_drama['created_date'] = DateTime.now
             data_drama['updated_date'] = DateTime.now
             new_drama = CreateDrama.call(
-              account: @auth_account,
+              auth: @auth,
               dramalist: @req_dramalist,
               drama_data: data_drama
             )
@@ -174,7 +165,7 @@ module DramaConnect
             req_data = JSON.parse(routing.body.read)
 
             visitor = AddVisitor.call(
-              account: @auth_account,
+              auth: @auth,
               dramalist: @req_dramalist,
               visitor_email: req_data['email']
             )
@@ -188,9 +179,10 @@ module DramaConnect
 
           # DELETE api/v1/dramaList/[list_id]/visitors
           routing.delete do
+            puts("🤙")
             req_data = JSON.parse(routing.body.read)
             visitor = RemoveVisitor.call(
-              req_username: @auth_account.username,
+              auth: @auth,
               visitor_email: req_data['email'],
               dramalist_id: list_id
             )
