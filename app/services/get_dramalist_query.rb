@@ -17,10 +17,10 @@ module DramaConnect
       end
     end
 
-    def self.call(account:, dramalist:)
+    def self.call(auth:, dramalist:)
       raise NotFoundError unless dramalist
 
-      policy = DramalistPolicy.new(account, dramalist)
+      policy = DramalistPolicy.new(auth[:account], dramalist, auth[:scope])
       raise ForbiddenError unless policy.can_view?
 
       dramalist.full_details.merge(policies: policy.summary)

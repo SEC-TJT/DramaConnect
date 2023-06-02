@@ -12,11 +12,6 @@ describe 'Test AddVisitor service' do
 
     dramalist_data = DATA[:dramalists].first
 
-    # @owner = DramaConnect::Account.all[0]
-    # @visitor = DramaConnect::Account.all[1]
-    # @dramalist = DramaConnect::CreateDramalistForOwner.call(
-    #   owner_id: @owner.id, dramalist_data:
-    # )
     @owner_data = DATA[:accounts][0]
     @owner = DramaConnect::Account.all[0]
     @visitor = DramaConnect::Account.all[1]
@@ -37,9 +32,13 @@ describe 'Test AddVisitor service' do
   end
 
   it 'BAD: should not add owner as a visitor' do
+    auth = DramaConnect::AuthenticateAccount.call(
+      username: @owner_data['username'],
+      password: @owner_data['password']
+    )
     _(proc {
         DramaConnect::AddVisitor.call(
-          account: @owner,
+          auth: auth,
           dramalist: @dramalist,
           visitor_email: @owner.email
         )

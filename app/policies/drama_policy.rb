@@ -1,22 +1,23 @@
 # frozen_string_literal: true
 
-# Policy to determine if account can view a project
+# Policy to determine if account can view a dramalist
 class DramaPolicy
-  def initialize(account, drama)
+  def initialize(account, drama, auth_scope = nil)
     @account = account
     @drama = drama
+    @auth_scope = auth_scope
   end
 
   def can_view?
-    account_visits_on_dramalist? || account_owns_dramalist?
+    can_read? && (account_owns_dramalist? || account_visits_on_dramalist?)
   end
 
   def can_edit?
-    account_owns_dramalist? || account_visits_on_dramalist?
+    can_write? && (account_owns_dramalist? || account_visits_on_dramalist?)
   end
 
   def can_delete?
-    account_owns_dramalist? || account_visits_on_dramalist?
+    can_write? && (account_owns_dramalist? || account_visits_on_dramalist?)
   end
 
   def summary
@@ -28,6 +29,14 @@ class DramaPolicy
   end
 
   private
+
+  def can_read?
+    @auth_scope ? @auth_scope.can_read?('dramas') : false
+  end
+
+  def can_write?
+    @auth_scope ? @auth_scope.can_write?('dramas') : false
+  end
 
   def account_owns_dramalist?
     puts @drama.dramalist.owner

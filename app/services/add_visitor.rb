@@ -10,9 +10,9 @@ module DramaConnect
       end
     end
 
-    def self.call(account:, dramalist:, visitor_email:)
+    def self.call(auth:, dramalist:, visitor_email:)
       invitee = Account.first(email: visitor_email)
-      policy = VisitingRequestPolicy.new(dramalist, account, invitee)
+      policy = VisitingRequestPolicy.new(dramalist, auth[:account], invitee, auth[:scope])
       raise ForbiddenError unless policy.can_invite?
 
       dramalist.add_visitor(invitee)

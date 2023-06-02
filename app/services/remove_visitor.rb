@@ -10,15 +10,16 @@ module DramaConnect
       end
     end
 
-    def self.call(req_username:, visitor_email:, dramalist_id:)
-      account = Account.first(username: req_username)
+    def self.call(auth:, visitor_email:, dramalist_id:)
+      puts("🥲")
       dramalist = Dramalist.first(id: dramalist_id)
       visitor = Account.first(email: visitor_email)
-
-      policy = VisitingRequestPolicy.new(dramalist, account, visitor)
+      policy = VisitingRequestPolicy.new(dramalist, auth[:account], visitor, auth[:scope])
+      puts(policy.can_remove?)
       raise ForbiddenError unless policy.can_remove?
 
       dramalist.remove_visitor(visitor)
+      puts(dramalist.visitors)
       visitor
     end
   end

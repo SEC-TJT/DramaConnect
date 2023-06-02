@@ -10,9 +10,9 @@ module DramaConnect
       end
     end
 
-    def self.call(requestor:, drama_id:)
+    def self.call(auth:, drama_id:)
       drama = Drama.first(id: drama_id)
-      policy = DramaPolicy.new(requestor, drama)
+      policy = DramaPolicy.new(auth[:account], drama, auth[:scope])
       raise ForbiddenError unless policy.can_delete?
 
       drama.delete

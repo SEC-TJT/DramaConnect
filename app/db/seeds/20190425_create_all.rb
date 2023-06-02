@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require './app/controllers/helpers.rb'
+include DramaConnect::SecureRequestHelpers
+
 Sequel.seed(:development) do
   def run
     puts 'Seeding accounts, dramalists, dramas'
@@ -29,9 +32,7 @@ def create_owned_dramalists
     account = DramaConnect::Account.first(username: owner['username'])
     owner['list_name'].each do |list_name|
       list_data = LIST_INFO.find { |list| list['name'] == list_name }
-      DramaConnect::CreateDramalistForOwner.call(
-        owner_id: account.id, dramalist_data: list_data
-      )
+      account.add_owned_dramalist(list_data)
     end
   end
 end
@@ -42,8 +43,10 @@ def create_dramas
   loop do
     dra_info = dra_info_each.next
     dramalist = dramalists_cycle.next
-    DramaConnect::CreateDocument.call(
-      account: dramalist.owner, dramalist:, drama_data: dra_info
+    auth_token = AuthToken.create(dramalist.owner)
+    auth = scoped_auth(auth_token)
+    DramaConnect::CreateDrama.call(
+      auth: auth, dramalist:, drama_data: dra_info
     )
   end
 end
@@ -52,6 +55,10 @@ def add_visitors
   visitor_info = VISITOR_INFO
   visitor_info.each do |visitor|
     list = DramaConnect::Dramalist.first(name: visitor['list_name'])
+
+    auth_token = AuthToken.create(list.owner)
+    auth = scoped_auth(auth_token)
+
     visitor['visitor_email'].each do |email|
       account = list.owner
       DramaConnect::AddVisitor.call(

@@ -8,15 +8,18 @@ module DramaConnect
   class Api < Roda
     route('accounts') do |routing| # rubocop:disable Metrics/BlockLength
       @account_route = "#{@api_root}/accounts"
-
       routing.on String do |username|
+        routing.halt(403, UNAUTH_MSG) unless @auth_account
+
         # GET api/v1/accounts/[username]
         routing.get do
-          account = GetAccountQuery.call(
-            requestor: @auth_account, username:
+          auth = AuthorizeAccount.call(
+            auth: @auth, username: username,
+            auth_scope: AuthScope.new(AuthScope::READ_ONLY),
+            isOwner: username == @auth_account.username
           )
-          account.to_json
-        rescue GetAccountQuery::ForbiddenError => e
+          { data: auth }.to_json
+        rescue AuthorizeAccount::ForbiddenError => e
           routing.halt 404, { message: e.message }.to_json
         rescue StandardError => e
           puts "GET ACCOUNT ERROR: #{e.inspect}"
@@ -27,7 +30,6 @@ module DramaConnect
       # POST api/v1/accounts
       routing.post do
         new_data = JSON.parse(routing.body.read)
-        puts new_data
         new_account = Account.new(new_data)
         raise('Could not save account') unless new_account.save
 
@@ -40,6 +42,17 @@ module DramaConnect
       rescue StandardError => e
         Api.logger.error 'Unknown error saving account'
         routing.halt 500, { message: e.message }.to_json
+      end
+
+      #  GET api/v1/accounts
+      routing.is do
+        routing.halt(403, UNAUTH_MSG) unless @auth_account
+        accounts = GetAccountList.call
+        response.status = 200
+        { message: 'Get accounts', data: accounts }.to_json
+      rescue StandardError => e
+        puts "GET ACCOUNTS ERROR: #{e.inspect}"
+        routing.halt 500, { message: 'API Server Error' }.to_json
       end
     end
   end

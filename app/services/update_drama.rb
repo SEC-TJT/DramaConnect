@@ -17,9 +17,9 @@ module DramaConnect
       end
     end
 
-    def self.call(account:, drama_id:, drama_data:)
+    def self.call(auth:, drama_id:, drama_data:)
       drama = Drama.find(id: drama_id)
-      policy = DramaPolicy.new(account, drama)
+      policy = DramaPolicy.new(auth[:account], drama, auth[:scope])
       raise ForbiddenError unless policy.can_edit?
 
       drama.update(drama_data)
