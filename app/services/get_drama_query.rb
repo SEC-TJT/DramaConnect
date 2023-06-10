@@ -24,7 +24,8 @@ module DramaConnect
       policy = DramaPolicy.new(auth[:account], drama, auth[:scope])
       raise ForbiddenError unless policy.can_view?
 
-      drama
+      puts policy.summary
+      [drama, policy.summary]
     end
   end
 end

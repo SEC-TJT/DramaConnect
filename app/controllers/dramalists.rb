@@ -14,10 +14,11 @@ module DramaConnect
       routing.get String, 'dramas', String do |list_id, drama_id|
         @req_dramalist = Dramalist.first(id: list_id)
         @req_drama = Drama.first(id: drama_id)
-        drama = GetDramaQuery.call(
+        drama, policy = GetDramaQuery.call(
           auth: @auth, drama: @req_drama
         )
-        { data: drama }.to_json
+        puts 'try:', policy
+        { data: drama, policy: }.to_json
       rescue GetDramaQuery::ForbiddenError => e
         routing.halt 403, { message: e.message }.to_json
       rescue GetDramaQuery::NotFoundError => e
