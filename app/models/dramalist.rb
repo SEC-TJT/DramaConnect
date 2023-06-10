@@ -43,7 +43,9 @@ module DramaConnect
         attributes: {
           id:,
           name:,
-          description:
+          description:,
+          created_date:,
+          updated_date:
         }
       }
     end

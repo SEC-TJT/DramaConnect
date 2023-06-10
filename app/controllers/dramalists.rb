@@ -34,10 +34,10 @@ module DramaConnect
         )
         { message: "#{drama.name} removed from dramalist",
           data: drama }.to_json
-        rescue RemoveDrama::ForbiddenError => e
-          routing.halt 403, { message: e.message }.to_json
-        rescue StandardError
-          routing.halt 500, { message: 'API server error' }.to_json
+      rescue RemoveDrama::ForbiddenError => e
+        routing.halt 403, { message: e.message }.to_json
+      rescue StandardError
+        routing.halt 500, { message: 'API server error' }.to_json
       end
 
       routing.post String, 'dramas', String, 'update' do |_list_id, drama_id|
@@ -64,9 +64,10 @@ module DramaConnect
       routing.on('owned') do
         routing.get do
           dramalists = DramalistPolicy::AccountScope.new(@auth_account).ownable
+          puts JSON.pretty_generate(data: dramalists)
           JSON.pretty_generate(data: dramalists)
-        rescue StandardError
-          routing.halt 403, { message: 'Could not find any dramalists' }.to_json
+          # rescue StandardError
+          #   routing.halt 403, { message: 'Could not find any dramalists' }.to_json
         end
       end
 
@@ -76,8 +77,8 @@ module DramaConnect
         dramalists = DramalistPolicy::AccountScope.new(@auth_account).shareable
         puts dramalists
         JSON.pretty_generate(data: dramalists)
-        rescue StandardError
-          routing.halt 403, { message: 'Could not find any dramalists' }.to_json
+      rescue StandardError
+        routing.halt 403, { message: 'Could not find any dramalists' }.to_json
       end
 
       routing.on String do |list_id| # rubocop:disable Metrics/BlockLength
@@ -87,7 +88,7 @@ module DramaConnect
           dramalist = GetDramalistQuery.call(
             auth: @auth, dramalist: @req_dramalist
           )
-
+          puts dramalist
           { data: dramalist }.to_json
         rescue GetDramalistQuery::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
@@ -179,7 +180,7 @@ module DramaConnect
 
           # DELETE api/v1/dramaList/[list_id]/visitors
           routing.delete do
-            puts("🤙")
+            puts('🤙')
             req_data = JSON.parse(routing.body.read)
             visitor = RemoveVisitor.call(
               auth: @auth,
