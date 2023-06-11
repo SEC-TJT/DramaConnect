@@ -25,6 +25,24 @@ module DramaConnect
           puts "GET ACCOUNT ERROR: #{e.inspect}"
           routing.halt 500, { message: 'API Server Error' }.to_json
         end
+
+        # PUT api/v1/accounts/[username]
+        routing.post('update') do
+          data_account = JSON.parse(routing.body.read)
+          account = UpdateAccount.call(
+            auth: @auth,
+            username:,
+            account_data: data_account
+          )
+          response.status = 200
+          { message: 'Account updated', data: data_account }.to_json
+        rescue UpdateDrama::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue UpdateDrama::IllegalRequestError => e
+          routing.halt 400, { message: e.message }.to_json
+        rescue StandardError => e
+          Api.logger.warn "Could not create drama: #{e.message}"
+        end
       end
 
       # POST api/v1/accounts

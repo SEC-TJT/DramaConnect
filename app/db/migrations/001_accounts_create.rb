@@ -11,6 +11,8 @@ Sequel.migration do
       String :name, null: false
       String :email, null: false, unique: true
       String :password_digest
+      String :avatar
+      String :description
       DateTime :created_date
       DateTime :updated_date
     end
