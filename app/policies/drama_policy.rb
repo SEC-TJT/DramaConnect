@@ -13,11 +13,11 @@ class DramaPolicy
   end
 
   def can_edit?
-    can_write? && (account_owns_dramalist? || account_visits_on_dramalist?)
+    can_write? && account_owns_dramalist?
   end
 
   def can_delete?
-    can_write? && (account_owns_dramalist? || account_visits_on_dramalist?)
+    can_write? && account_owns_dramalist?
   end
 
   def summary

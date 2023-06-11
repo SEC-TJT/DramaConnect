@@ -15,26 +15,23 @@ module DramaConnect
 
     # duplication is ok!
     def can_edit?
-      can_write? && (account_is_owner? || account_is_visitor?)
+      can_write? && account_is_owner?
     end
 
     def can_delete?
-      can_write? && (account_is_owner?)
-    end
-
-    def can_leave?
+      can_write? && account_is_owner?
     end
 
     def can_add_dramas?
-      can_write? && (account_is_owner? || account_is_visitor?)
+      can_write? && account_is_owner?
     end
 
     def can_remove_dramas?
-      can_write? && (account_is_owner? || account_is_visitor?)
+      can_write? && account_is_owner?
     end
 
     def can_add_visitors?
-      can_write? && (account_is_owner? || account_is_visitor?)
+      can_write? && account_is_owner?
     end
 
     def can_remove_visitors?
@@ -45,12 +42,11 @@ module DramaConnect
       !(account_is_owner? or account_is_visitor?)
     end
 
-    def summary # rubocop:disable Metrics/MethodLength
+    def summary
       {
         can_view: can_view?,
         can_edit: can_edit?,
         can_delete: can_delete?,
-        can_leave: can_leave?,
         can_add_dramas: can_add_dramas?,
         can_delete_dramas: can_remove_dramas?,
         can_add_visitors: can_add_visitors?,
@@ -60,6 +56,7 @@ module DramaConnect
     end
 
     private
+
     def can_read?
       @auth_scope ? @auth_scope.can_read?('dramalists') : false
     end
