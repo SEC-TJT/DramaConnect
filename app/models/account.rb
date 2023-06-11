@@ -18,7 +18,7 @@ module DramaConnect
            visitings: :nullify
 
     plugin :whitelist_security
-    set_allowed_columns :username, :email, :password, :name
+    set_allowed_columns :username, :email, :password, :name, :avatar, :description
 
     plugin :timestamps, update_on_create: true
 
@@ -47,7 +47,9 @@ module DramaConnect
           type: 'account',
           attributes: {
             username:,
-            email:
+            email:,
+            avatar:,
+            description:
           }
         }, options
       )
