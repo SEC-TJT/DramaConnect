@@ -34,8 +34,7 @@ module DramaConnect
             username:,
             account_data: data_account
           )
-          response.status = 201
-          response['Location'] = "#{@dra_route}/#{drama_list.id}"
+          response.status = 200
           { message: 'Account updated', data: data_account }.to_json
         rescue UpdateDrama::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
