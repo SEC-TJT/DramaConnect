@@ -120,21 +120,6 @@ module DramaConnect
         rescue StandardError => e
           Api.logger.warn "Could not create drama: #{e.message}"
         end
-        # Delete api/v1/dramaLists/[ID]
-        routing.delete do
-          puts list_id
-          list = RemoveDramalist.call(
-            auth: @auth,
-            dramalist_id: list_id
-          )
-
-          { message: "#{list.name} removed from dramalist",
-            data: list }.to_json
-        rescue RemoveDramalist::ForbiddenError => e
-          routing.halt 403, { message: e.message }.to_json
-        rescue StandardError
-          routing.halt 500, { message: 'API server error' }.to_json
-        end
 
         routing.on('dramas') do
           # POST api/v1/dramaList/[list_id]/dramas
@@ -161,11 +146,11 @@ module DramaConnect
           end
         end
 
-        routing.on('visitors') do # rubocop:disable Metrics/BlockLength
+        routing.on('visitors') do
           # PUT api/v1/dramaList/[list_id]/visitors
           routing.put do
             req_data = JSON.parse(routing.body.read)
-
+            puts 'ttt'
             visitor = AddVisitor.call(
               auth: @auth,
               dramalist: @req_dramalist,
@@ -181,8 +166,8 @@ module DramaConnect
 
           # DELETE api/v1/dramaList/[list_id]/visitors
           routing.delete do
-            puts('🤙')
             req_data = JSON.parse(routing.body.read)
+            puts 'delete data', req_data
             visitor = RemoveVisitor.call(
               auth: @auth,
               visitor_email: req_data['email'],
@@ -191,11 +176,27 @@ module DramaConnect
 
             { message: "#{visitor.username} removed from dramalist",
               data: visitor }.to_json
-          rescue RemoveVisitor::ForbiddenError => e
-            routing.halt 403, { message: e.message }.to_json
-          rescue StandardError
-            routing.halt 500, { message: 'API server error' }.to_json
+            # rescue RemoveVisitor::ForbiddenError => e
+            #   routing.halt 403, { message: e.message }.to_json
+            # rescue StandardError
+            #   routing.halt 500, { message: 'API server error' }.to_json
           end
+        end
+
+        # Delete api/v1/dramaLists/[ID]
+        routing.delete do
+          puts list_id
+          list = RemoveDramalist.call(
+            auth: @auth,
+            dramalist_id: list_id
+          )
+
+          { message: "#{list.name} removed from dramalist",
+            data: list }.to_json
+        rescue RemoveDramalist::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
         end
       end
 
