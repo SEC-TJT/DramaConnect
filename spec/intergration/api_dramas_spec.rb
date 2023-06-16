@@ -26,10 +26,9 @@ describe 'Test Drama Handling' do
       header 'AUTHORIZATION', auth_header(@account_data)
       get "/api/v1/dramas/#{dra.id}"
       _(last_response.status).must_equal 200
-
       result = JSON.parse(last_response.body)['data']
-      _(result['attributes']['id']).must_equal dra.id
-      _(result['attributes']['name']).must_equal dra_data['name']
+      _(result[0]['attributes']['id']).must_equal dra.id.to_s
+      _(result[0]['attributes']['name']).must_equal dra_data['name']
     end
 
     it 'SAD AUTHORIZATION: should not get details without authorization' do

@@ -49,3 +49,5 @@ end
 # debugging
 gem 'pry'
 gem 'rack-test'
+
+gem 'simplecov'
