@@ -30,6 +30,24 @@ describe 'Test Drama Handling' do
       _(result[0]['attributes']['id']).must_equal dra.id.to_s
       _(result[0]['attributes']['name']).must_equal dra_data['name']
     end
+    it 'HAPPY: should be able to delete a single drama' do
+      dra_data = DATA[:dramas][0]
+      list = @account.dramalists.first
+      dra = list.add_drama(dra_data)
+      header 'AUTHORIZATION', auth_header(@account_data)
+      delete "/api/v1/dramaList/#{list.id}/dramas/#{dra.id}"
+      _(last_response.status).must_equal 200
+    end
+
+    it 'HAPPY: should be able to update a single drama' do
+      dra_data = DATA[:dramas][0]
+      list = @account.dramalists.first
+      dra = list.add_drama(dra_data)
+      update_dra = DATA[:dramas][1]
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "/api/v1/dramaList/#{list.id}/dramas/#{dra.id}/update", update_dra.to_json
+      _(last_response.status).must_equal 201
+    end
 
     it 'SAD AUTHORIZATION: should not get details without authorization' do
       dra_data = DATA[:dramas][1]

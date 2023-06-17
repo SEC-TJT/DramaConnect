@@ -29,6 +29,22 @@ describe 'Test Drama List Handling' do
         result = JSON.parse last_response.body
         _(result['data'].count).must_equal 2
       end
+
+      it 'HAPPY: should delete list for authorized account' do
+        drama_list = DramaConnect::Dramalist.first
+        header 'AUTHORIZATION', auth_header(@account_data)
+        delete "api/v1/dramaList/#{drama_list.id}"
+        _(last_response.status).must_equal 200
+      end
+
+      it 'HAPPY: should update list for authorized account' do
+        drama_list = DramaConnect::Dramalist.first
+        update_dralist = DATA[:dramalists][1]
+        header 'AUTHORIZATION', auth_header(@account_data)
+        post "api/v1/dramaList/#{drama_list.id}/update", update_dralist.to_json
+        _(last_response.status).must_equal 201
+      end
+
       it 'BAD: should not process without authorization' do
         get 'api/v1/dramaList'
         _(last_response.status).must_equal 403
