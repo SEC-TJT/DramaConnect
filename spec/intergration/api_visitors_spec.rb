@@ -77,7 +77,7 @@ describe 'Test Visitor Handling' do
     end
 
     it 'BAD AUTHORIZATION: should not remove invalid visitor' do
-      req_data = { email: @another_account.email }
+      req_data = { email: "invalid email" }
 
       header 'AUTHORIZATION', auth_header(@account_data)
       delete "api/v1/dramaList/#{@list.id}/visitors", req_data.to_json

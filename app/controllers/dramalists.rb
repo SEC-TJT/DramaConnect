@@ -176,10 +176,10 @@ module DramaConnect
 
             { message: "#{visitor.username} removed from dramalist",
               data: visitor }.to_json
-            # rescue RemoveVisitor::ForbiddenError => e
-            #   routing.halt 403, { message: e.message }.to_json
-            # rescue StandardError
-            #   routing.halt 500, { message: 'API server error' }.to_json
+            rescue RemoveVisitor::ForbiddenError => e
+              routing.halt 403, { message: e.message }.to_json
+            rescue StandardError
+              routing.halt 500, { message: 'API server error' }.to_json
           end
         end
 
