@@ -19,8 +19,6 @@ module DramaConnect
             isOwner: username == @auth_account.username
           )
           { data: auth }.to_json
-        rescue AuthorizeAccount::ForbiddenError => e
-          routing.halt 404, { message: e.message }.to_json
         rescue StandardError => e
           puts "GET ACCOUNT ERROR: #{e.inspect}"
           routing.halt 500, { message: 'API Server Error' }.to_json
@@ -36,12 +34,12 @@ module DramaConnect
           )
           response.status = 200
           { message: 'Account updated', data: data_account }.to_json
-        rescue UpdateDrama::ForbiddenError => e
+        rescue UpdateAccount::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
-        rescue UpdateDrama::IllegalRequestError => e
+        rescue UpdateAccount::IllegalRequestError => e
           routing.halt 400, { message: e.message }.to_json
         rescue StandardError => e
-          Api.logger.warn "Could not create drama: #{e.message}"
+          Api.logger.warn "Could not update account: #{e.message}"
         end
       end
 
@@ -69,9 +67,6 @@ module DramaConnect
         accounts = GetAccountList.call
         response.status = 200
         { message: 'Get accounts', data: accounts }.to_json
-      rescue StandardError => e
-        puts "GET ACCOUNTS ERROR: #{e.inspect}"
-        routing.halt 500, { message: 'API Server Error' }.to_json
       end
     end
   end

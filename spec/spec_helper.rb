@@ -44,6 +44,7 @@ DATA = {} # rubocop:disable Style/MutableConstant
 DATA[:dramas] = YAML.safe_load File.read('app/db/seeds/drama_seeds.yml')
 DATA[:dramalists] = YAML.safe_load File.read('app/db/seeds/dramalist_seeds.yml')
 DATA[:accounts] = YAML.safe_load File.read('app/db/seeds/account_seeds.yml')
+DATA[:accounts_modified] = YAML.safe_load File.read('app/db/seeds/account_modified_seeds.yml')
 
 ## SSO fixtures
 GH_ACCOUNT_RESPONSE = YAML.load(

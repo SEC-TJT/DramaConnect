@@ -27,6 +27,31 @@ describe 'Test Account Handling' do
       _(account_data['password_hash']).must_be_nil
       _(result['auth_token']).wont_be_nil
     end
+    it 'SAD: should not be able to get details of a single account without authorization' do
+      account_data = DATA[:accounts][0]
+      account = DramaConnect::Account.create(account_data)
+
+      get "/api/v1/accounts/#{account.username}"
+      _(last_response.status).must_equal 403
+    end
+    it 'HAPPY: should be able to get all account' do
+      account_data = DATA[:accounts][0]
+      account = DramaConnect::Account.create(account_data)
+
+      header 'AUTHORIZATION', auth_header(account_data)
+      get "/api/v1/accounts"
+      _(last_response.status).must_equal 200
+
+      result = JSON.parse(last_response.body)['data']
+      _(result.length).must_equal 1
+    end
+    it 'BAD: should not be able to get all account without authorization' do
+      account_data = DATA[:accounts][0]
+      account = DramaConnect::Account.create(account_data)
+
+      get "/api/v1/accounts"
+      _(last_response.status).must_equal 403
+    end
   end
 
   describe 'Account Creation' do
@@ -63,6 +88,42 @@ describe 'Test Account Handling' do
       post 'api/v1/accounts', @account_data.to_json
       _(last_response.status).must_equal 403
       _(last_response.headers['Location']).must_be_nil
+    end
+  end
+
+  describe 'Account Modification' do
+    before do
+      @account_data = DATA[:accounts][1]
+      @other_account_data = DATA[:accounts][2]
+      @new_account_data = DATA[:accounts_modified][0]
+    end
+
+    it 'HAPPY: should be able to modify account' do
+      account = DramaConnect::Account.create(@account_data)
+
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "api/v1/accounts/#{account.username}/update", @new_account_data.to_json
+      _(last_response.status).must_equal 200
+
+      header 'AUTHORIZATION', auth_header(@account_data)
+      get "/api/v1/accounts/#{account.username}"
+      _(last_response.status).must_equal 200
+      new_data = JSON.parse(last_response.body)['data']['attributes']['account']['attributes']
+
+      _(new_data['username']).must_equal @new_account_data['username']
+      _(new_data['email']).must_equal @new_account_data['email']
+      _(new_data['description']).must_equal @new_account_data['description']
+    end
+
+    it 'BAD REQUEST: should not accept unauthrized modifacation' do
+      post 'api/v1/accounts',
+           SignedRequest.new(app.config).sign(@other_account_data).to_json
+      _(last_response.status).must_equal 201
+
+      header 'AUTHORIZATION', auth_header(@other_account_data)
+      post "api/v1/accounts/#{@account_data['username']}/update", @new_account_data.to_json
+
+      _(last_response.status).must_equal 403
     end
   end
 end
